@@ -1,5 +1,6 @@
 import scrapy
 
+
 class DeutscheWelle(scrapy.Spider):
     name = 'DW'
 
@@ -11,18 +12,18 @@ class DeutscheWelle(scrapy.Spider):
 
     def parse(self, response):
         for title in response.xpath("//a//h2[@class='linkable']/parent::a"):
-            absoluteUrl = title.xpath("@href").get()
-            if "https" not in absoluteUrl:
-                absoluteUrl = 'https://www.dw.com/en/top-stories/world/s-1429'+absoluteUrl
+            absolute_url = title.xpath("@href").get()
+            if "https" not in absolute_url:
+                absolute_url = 'https://www.dw.com/en/top-stories/world/s-1429' + absolute_url
             yield {
                 'news_text': title.xpath(".//child::h2/text()").get().strip('\n'),
-                'news_href': absoluteUrl
+                'news_href': absolute_url
             }
         for title in response.xpath("//a//div[@class='teaserContentWrap']//h2/../parent::a"):
-            absoluteUrl = title.xpath("@href").get()
-            if "https" not in absoluteUrl:
-                absoluteUrl = 'https://www.dw.com/en/top-stories/world/s-1429'+absoluteUrl
+            absolute_url = title.xpath("@href").get()
+            if "https" not in absolute_url:
+                absolute_url = 'https://www.dw.com/en/top-stories/world/s-1429' + absolute_url
             yield {
                 'news_text': title.xpath(".//child::h2/text()").get().strip('\n'),
-                'news_href': absoluteUrl
+                'news_href': absolute_url
             }

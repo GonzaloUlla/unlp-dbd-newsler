@@ -4,7 +4,7 @@ python -m venv .
 echo "Activating environment"
 .\Scripts\activate.bat
 
-echo "Intalling dependencies"
+echo "Installing dependencies"
 pip install -r requirements.txt
 
 echo "##################################################"
