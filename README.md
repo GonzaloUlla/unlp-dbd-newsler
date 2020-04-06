@@ -20,9 +20,24 @@ Diseño de Bases de Datos (DBD) - MS in Software Engineering 2019/2020 - UNLP
 
 ## Getting Started
 
+* Running Scrapy
+
 ```bash
 # Check scrapy.org
-scrapy runspider myspider.py
+cd scrapy_prototype
+scrapy runspider the_guardian_spider.py -o the_guardian_spider.json 2>&1 | tee -a the_guardian_spider.log
+```
+
+* Starting Elasticsearch and Kibana
+```bash
+# If you are using a VM or Elasticsearch exits with code 78, run this with root:
+#sysctl -w vm.max_map_count=262144
+
+# Single-node Elasticsearch
+docker-compose up -d
+
+# Multi-node Elasticsearch
+docker-compose -f docker-compose-ha.yml up -d
 ```
 
 ## Conventions
