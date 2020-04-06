@@ -4,10 +4,10 @@ import scrapy
 class DeutscheWelle(scrapy.Spider):
     name = 'DW'
 
-    baseUrl = 'https://www.dw.com/en/top-stories/world/s-1429'
+    base_url = 'https://www.dw.com/en/top-stories/world/s-1429'
 
     start_urls = [
-        baseUrl
+        base_url
     ]
 
     def parse(self, response):

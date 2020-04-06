@@ -4,10 +4,10 @@ import scrapy
 class AlJazeeraScrapy(scrapy.Spider):
     name = 'AlJazeera'
 
-    baseUrl = 'https://www.aljazeera.com'
+    base_url = 'https://www.aljazeera.com'
 
     start_urls = [
-        baseUrl + '/news'
+        base_url + '/news'
     ]
 
     def parse(self, response):

@@ -58,6 +58,14 @@ services:
     networks:
       - elastic
 
+  newscrawler:
+    build:
+      context: ./newscrawler
+    image: newscrawler:1
+    container_name: newscrawler
+    networks:
+      - elastic
+
 volumes:
   data:
     driver: local

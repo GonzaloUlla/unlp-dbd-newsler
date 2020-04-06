@@ -4,10 +4,10 @@ import scrapy
 class CnnScrapy(scrapy.Spider):
     name = 'CNN'
 
-    baseUrl = 'https://www.cnn.com/world'
+    base_url = 'https://www.cnn.com/world'
 
     start_urls = [
-        baseUrl
+        base_url
     ]
 
     def parse(self, response):

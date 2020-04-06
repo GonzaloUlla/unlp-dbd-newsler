@@ -24,11 +24,11 @@ Diseño de Bases de Datos (DBD) - MS in Software Engineering 2019/2020 - UNLP
 
 ```bash
 # Check scrapy.org
-cd scrapy_prototype
+cd scrapy_prototype/spiders
 scrapy runspider the_guardian_spider.py -o the_guardian_spider.json 2>&1 | tee -a the_guardian_spider.log
 ```
 
-* Starting Elasticsearch and Kibana
+* Running with Docker
 ```bash
 # If you are using a VM or Elasticsearch exits with code 78, run this with root:
 #sysctl -w vm.max_map_count=262144

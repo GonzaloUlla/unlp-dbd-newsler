@@ -4,9 +4,10 @@ import scrapy
 class FoxNewsScrapy(scrapy.Spider):
     name = 'FoxNews'
 
-    baseUrl = 'https://www.foxnews.com/world'
+    base_url = 'https://www.foxnews.com/world'
+
     start_urls = [
-        baseUrl
+        base_url
     ]
 
     def parse(self, response):
