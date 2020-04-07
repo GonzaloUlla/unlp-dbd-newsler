@@ -1,0 +1,8 @@
+/usr/src/app/logs/*.log {
+    size 1k
+    copytruncate
+    compress
+    daily
+    missingok
+    rotate 5
+}
