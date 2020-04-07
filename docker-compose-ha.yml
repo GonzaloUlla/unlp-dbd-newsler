@@ -23,9 +23,9 @@ services:
     ports:
       - 9200:9200
     networks:
-      - elastic
+      - elk
     healthcheck:
-      start_period: 20s
+      start_period: 30s
       test: ["CMD", "curl", "-f", "http://localhost:9200"]
       interval: 15s
       timeout: 3s
@@ -50,9 +50,9 @@ services:
         source: data02
         target: /usr/share/elasticsearch/data
     networks:
-      - elastic
+      - elk
     healthcheck:
-      start_period: 20s
+      start_period: 30s
       test: ["CMD", "curl", "-f", "http://localhost:9200"]
       interval: 15s
       timeout: 3s
@@ -77,9 +77,9 @@ services:
         source: data03
         target: /usr/share/elasticsearch/data
     networks:
-      - elastic
+      - elk
     healthcheck:
-      start_period: 20s
+      start_period: 30s
       test: ["CMD", "curl", "-f", "http://localhost:9200"]
       interval: 15s
       timeout: 3s
@@ -93,14 +93,33 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - ./kibana-ha.yml:/usr/share/kibana/config/kibana.yml
+      - ./elk/kibana-ha.yml:/usr/share/kibana/config/kibana.yml
     ports:
       - 5601:5601
     networks:
-      - elastic
+      - elk
     healthcheck:
-      start_period: 20s
+      start_period: 30s
       test: ["CMD", "curl", "-f", "http://localhost:5601"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.6.2
+    container_name: logstash
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    volumes:
+      - ./elk/logstash-ha.yml:/usr/share/logstash/config/logstash.yml
+      - ./elk/pipeline-ha:/usr/share/logstash/pipeline:ro
+    ports:
+      - 9600:9600
+    networks:
+      - elk
+    healthcheck:
+      start_period: 30s
+      test: ["CMD", "curl", "-f", "http://localhost:9600"]
       interval: 15s
       timeout: 3s
       retries: 5
@@ -111,7 +130,7 @@ services:
     ports:
       - 9000:9000
     networks:
-      - elastic
+      - elk
 
   news-crawler:
     build:
@@ -119,7 +138,7 @@ services:
     image: news-crawler:1
     container_name: news-crawler
     networks:
-      - elastic
+      - elk
 
 volumes:
   data01:
@@ -130,5 +149,5 @@ volumes:
     driver: local
 
 networks:
-  elastic:
+  elk:
     driver: bridge
