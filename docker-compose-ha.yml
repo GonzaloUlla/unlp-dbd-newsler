@@ -113,11 +113,11 @@ services:
     networks:
       - elastic
 
-  newscrawler:
+  news-crawler:
     build:
-      context: ./newscrawler
-    image: newscrawler:1
-    container_name: newscrawler
+      context: news-crawler
+    image: news-crawler:1
+    container_name: news-crawler
     networks:
       - elastic
 
