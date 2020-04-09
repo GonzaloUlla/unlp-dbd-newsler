@@ -20,7 +20,7 @@ Diseño de Bases de Datos (DBD) - MS in Software Engineering 2019/2020 - UNLP
 
 ## Getting Started
 
-* Running Scrapy
+* Running one Spider
 
 ```bash
 # Check scrapy.org
@@ -29,6 +29,7 @@ scrapy runspider the_guardian_spider.py -o the_guardian_spider.json 2>&1 | tee -
 ```
 
 * Running with Docker
+
 ```bash
 # If you are using a VM or Elasticsearch exits with code 78, run this with root:
 #sysctl -w vm.max_map_count=262144
@@ -40,6 +41,12 @@ docker-compose up -d
 docker-compose -f docker-compose-ha.yml up -d
 ```
 
+* Run all Spiders (WIP: Template Method version)
+
+```bash
+python3.8 news-crawler/spiders/websites.py
+```
+
 ## Conventions
 
 ### Style Guide
@@ -48,11 +55,13 @@ docker-compose -f docker-compose-ha.yml up -d
 
 ### Branching Model
 
-Pushing to **feature** branches and then opening a Pull Request to **master**
+Pushing to **feature** branches and then opening a Pull Request to **master**. Refer to [CONTRIBUTING.md](https://github.com/GonzaloUlla/unlp-dbd-newsler/blob/master/CONTRIBUTING.md)
 
 ### Contributing
 
 To contribute to the project, get in touch with one of the [Authors](#Authors).
+
+Check our [Contributing](https://github.com/GonzaloUlla/unlp-dbd-newsler/blob/master/CONTRIBUTING.md) and [Code of Conduct](https://github.com/GonzaloUlla/unlp-dbd-newsler/blob/master/CODE_OF_CONDUCT.md) documents. 
 
 ## Authors
 
