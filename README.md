@@ -25,6 +25,8 @@ Diseño de Bases de Datos (DBD) - MS in Software Engineering 2019/2020 - UNLP
 
 ## Getting Started
 
+### Running news-crawler
+
 - Running one Spider
 
 ```bash
@@ -50,6 +52,33 @@ docker-compose -f docker-compose-ha.yml up -d
 
 ```bash
 python3.8 news-crawler/spiders/websites.py
+```
+
+### Running twitter-crawler
+
+- Twitter-crawler prerequisites
+
+Create a **.env** file inside `twitter-crawler` with the following keys.
+
+```bash
+CONSUMER_KEY=
+CONSUMER_SECRET=
+ACCESS_TOKEN=
+ACCESS_TOKEN_SECRET=
+```
+
+- Run polling scrapers
+
+```bash
+cd twitter-crawler
+python3.8 -m scrapers.polling scrapers/polling.py
+```
+
+- Run streaming scrapers
+
+```bash
+cd twitter-crawler
+python3.8 -m scrapers.streaming scrapers/streaming.py
 ```
 
 ## Conventions
