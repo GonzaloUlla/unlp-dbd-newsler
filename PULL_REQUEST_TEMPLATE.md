@@ -1,26 +1,24 @@
-## Proposed Changes
+# Proposed Changes
 <!--- MANDATORY -->
 
-  - 
-  - 
-  - 
+-
+-
+-
 
-### Test Cases performed?
+## Test Cases performed
 <!--- MANDATORY -->
 
-  - 
-  - 
-  - 
- 
-### Documentation updated?
+-
+-
+-
+
+## Documentation updated
 <!--- MANDATORY -->
 
-  - 
- 
+-
+
 ## Detailed Description
 <!--- OPTIONAL -->
 
 ## Related Issue
 <!--- OPTIONAL -->
-
-
