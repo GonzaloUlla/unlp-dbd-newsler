@@ -20,9 +20,9 @@ RUN python3 -m pip install -r requirements.txt
 
 ADD . /usr/src/app/
 
-RUN chmod 644 spiders_logs && \
-    chown root:root spiders_logs && \
-    cp spiders_logs /etc/logrotate.d/ && \
+RUN chmod 644 scrapers_logs && \
+    chown root:root scrapers_logs && \
+    cp scrapers_logs /etc/logrotate.d/ && \
     crontab cronjob
 
-CMD service cron start && service filebeat start && tail -f /dev/null
+ENTRYPOINT ["./entrypoint.sh"]

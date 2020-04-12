@@ -1,16 +1,16 @@
 """
 Twitter Scraper to stream tweets in real time according to specific keywords.
 """
-from datetime import datetime, timedelta
 import json
 import logging
 import os
+from datetime import datetime
 
 import tweepy
 
 from .config import create_api
 
-formatter = '%(levelname)s [%(asctime)s] %(name)s: %(message)s'
+formatter = '%(levelname)s [%(asctime)s] %(filename)s: %(message)s'
 logging.basicConfig(level=logging.INFO, format=formatter)
 logger = logging.getLogger()
 
@@ -34,37 +34,22 @@ def extract_tweet(tweet):
         'tweet_hashtags': tweet.entities['hashtags'],
         'tweet_user_mentions': tweet.entities['user_mentions'],
         'tweet_source': tweet.source,
-        'tweet_timestamp': str(tweet.created_at)
+        'tweet_timestamp': str(tweet.created_at),
+        'tweet_streaming': True
     }
     return tweet_dict
 
 
-def get_filename(dt):
-    to_json_timestamp = dt.strftime('%Y%m%d_%H%M')
+def get_filename():
+    to_json_timestamp = datetime.now().strftime('%Y%m%d_%H%M')
     path = os.getcwd()
-    return path + '/stream_' + to_json_timestamp + '.json'
-
-
-def check_valid_json(dt):
-    filename = get_filename(dt)
-    last_filename = get_filename(dt - timedelta(minutes=1))
-    if not os.path.exists(filename):
-        with open(filename, 'a+') as file:
-            file.write('[')
-        if os.path.exists(last_filename):
-            with open(last_filename, 'a+') as file:
-                file.write(']')
-    else:
-        with open(filename, 'a+') as file:
-            file.write(',')
+    return path + '/data/streaming_' + to_json_timestamp + '.json'
 
 
 def export_tweet(tweet):
-    dt = datetime.now()
-    check_valid_json(dt)
-    filename = get_filename(dt)
+    filename = get_filename()
     with open(filename, 'a+') as file:
-        file.write(json.dumps(extract_tweet(tweet)))
+        file.write(json.dumps(extract_tweet(tweet)) + '\n')
     logger.info('Tweets exported to: {}'.format(filename))
 
 

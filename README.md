@@ -9,7 +9,12 @@ Diseño de Bases de Datos (DBD) - MS in Software Engineering 2019/2020 - UNLP
 - [unlp-dbd-newsler](#unlp-dbd-newsler)
   - [Table of Contents](#table-of-contents)
   - [Prerequisites](#prerequisites)
+    - [Dependencies](#dependencies)
+    - [Configuration](#configuration)
   - [Getting Started](#getting-started)
+    - [Running everything with Docker](#running-everything-with-docker)
+    - [Running only news-crawler](#running-only-news-crawler)
+    - [Running only twitter-crawler](#running-only-twitter-crawler)
   - [Conventions](#conventions)
     - [Style Guide](#style-guide)
     - [Branching Model](#branching-model)
@@ -18,28 +23,40 @@ Diseño de Bases de Datos (DBD) - MS in Software Engineering 2019/2020 - UNLP
 
 ## Prerequisites
 
+### Dependencies
+
 - Python 3.8
   - How to install latest stable release [here](https://tecadmin.net/install-python-3-8-ubuntu/)
-- Scrapy 2.0.1
+- Scrapy 2.0.1, Tweepy 3.8.0 and JsonLines 1.2.0
   - `pip install -r requirements.txt`
+
+### Configuration
+
+- Create a **.env** file inside `twitter-crawler` with the following keys
+
+```bash
+CONSUMER_KEY=<KEY-WITHOUT-QUOTES>
+CONSUMER_SECRET=<KEY-WITHOUT-QUOTES>
+ACCESS_TOKEN=<KEY-WITHOUT-QUOTES>
+ACCESS_TOKEN_SECRET=<KEY-WITHOUT-QUOTES>
+```
+
+- If you are not using Docker, remember to export the previous keys
+
+```bash
+export CONSUMER_KEY=<KEY-WITHOUT-QUOTES>
+export CONSUMER_SECRET=<KEY-WITHOUT-QUOTES>
+export ACCESS_TOKEN=<KEY-WITHOUT-QUOTES>
+export ACCESS_TOKEN_SECRET=<KEY-WITHOUT-QUOTES>
+```
 
 ## Getting Started
 
-### Running news-crawler
-
-- Running one Spider
-
-```bash
-# Check scrapy.org
-cd scrapy_prototype/spiders
-scrapy runspider the_guardian_spider.py -o the_guardian_spider.json 2>&1 | tee -a the_guardian_spider.log
-```
-
-- Running with Docker
+### Running everything with Docker
 
 ```bash
 # If you are using a VM or Elasticsearch exits with code 78, run this with root:
-#sysctl -w vm.max_map_count=262144
+# sysctl -w vm.max_map_count=262144
 
 # Single-node Elasticsearch
 docker-compose up -d
@@ -48,24 +65,23 @@ docker-compose up -d
 docker-compose -f docker-compose-ha.yml up -d
 ```
 
+### Running only news-crawler
+
+- Run one Spider
+
+```bash
+# Check scrapy.org
+cd news-crawler
+scrapy runspider spiders/the_guardian_spider.py -o data/the_guardian_spider.json 2>&1
+```
+
 - Run all Spiders (WIP: Template Method version)
 
 ```bash
 python3.8 news-crawler/spiders/websites.py
 ```
 
-### Running twitter-crawler
-
-- Twitter-crawler prerequisites
-
-Create a **.env** file inside `twitter-crawler` with the following keys.
-
-```bash
-CONSUMER_KEY=
-CONSUMER_SECRET=
-ACCESS_TOKEN=
-ACCESS_TOKEN_SECRET=
-```
+### Running only twitter-crawler
 
 - Run polling scrapers
 

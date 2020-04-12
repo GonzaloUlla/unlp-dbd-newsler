@@ -1,17 +1,17 @@
 """
 Twitter Scraper to poll last tweets periodically according to a specific query.
 """
-from datetime import datetime
-import json
 import logging
 import os
 import time
+from datetime import datetime
 
+import jsonlines
 import tweepy
 
 from .config import create_api
 
-formatter = '%(levelname)s [%(asctime)s] %(name)s: %(message)s'
+formatter = '%(levelname)s [%(asctime)s] %(filename)s: %(message)s'
 logging.basicConfig(level=logging.INFO, format=formatter)
 logger = logging.getLogger()
 
@@ -19,7 +19,7 @@ logger = logging.getLogger()
 def get_filename():
     to_json_timestamp = datetime.today().strftime('%Y%m%d_%H%M%S')
     path = os.getcwd()
-    return path + '/tweets_' + to_json_timestamp + '.json'
+    return path + '/data/polling_' + to_json_timestamp + '.json'
 
 
 def extract_tweet(tweet):
@@ -45,7 +45,8 @@ def extract_tweet(tweet):
         'tweet_hashtags': tweet.entities['hashtags'],
         'tweet_user_mentions': tweet.entities['user_mentions'],
         'tweet_source': tweet.source,
-        'tweet_timestamp': str(tweet.created_at)
+        'tweet_timestamp': str(tweet.created_at),
+        'tweet_streaming': False
     }
     return tweet_dict
 
@@ -76,8 +77,8 @@ def scrap_tweets(api, query, tweets_count):
 
 def export_tweets(tweets):
     filename = get_filename()
-    with open(filename, 'w') as file:
-        file.write(json.dumps(tweets))
+    with jsonlines.open(filename, mode='w') as writer:
+        writer.write_all(tweets)
     logger.info('Tweets exported to: {}'.format(filename))
 
 

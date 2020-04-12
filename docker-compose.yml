@@ -69,24 +69,48 @@ services:
       timeout: 3s
       retries: 5
 
-  cerebro:
-    image: lmenezes/cerebro:0.8.5
-    container_name: cerebro
-    ports:
-      - 9000:9000
-    networks:
-      - elk
-
   news-crawler:
     build:
       context: news-crawler
-    image: news-crawler:1
+    image: news-crawler
     container_name: news-crawler
+    volumes:
+      - type: volume
+        source: news-data
+        target: /usr/src/app/data
+      - type: volume
+        source: news-logs
+        target: /usr/src/app/logs
+    networks:
+      - elk
+
+  twitter-crawler:
+    build:
+      context: twitter-crawler
+    image: twitter-crawler
+    container_name: twitter-crawler
+    env_file:
+      - twitter-crawler/.env
+    volumes:
+      - type: volume
+        source: twitter-data
+        target: /usr/src/app/data
+      - type: volume
+        source: twitter-logs
+        target: /usr/src/app/logs
     networks:
       - elk
 
 volumes:
   data:
+    driver: local
+  news-data:
+    driver: local
+  news-logs:
+    driver: local
+  twitter-data:
+    driver: local
+  twitter-logs:
     driver: local
 
 networks:

@@ -4,7 +4,7 @@ import os
 import tweepy
 
 
-formatter = '%(levelname)s [%(asctime)s] %(name)s: %(message)s'
+formatter = '%(levelname)s [%(asctime)s] %(filename)s: %(message)s'
 logging.basicConfig(level=logging.INFO, format=formatter)
 logger = logging.getLogger()
 
