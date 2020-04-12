@@ -17,6 +17,7 @@ logger = logging.getLogger()
 
 def extract_tweet(tweet):
     tweet_dict = {
+        'event_id': tweet.id_str,
         'user_id': tweet.user.id,
         'user_name': tweet.user.screen_name,
         'user_description': tweet.user.description,
@@ -61,12 +62,13 @@ class NewsStreamListener(tweepy.StreamListener):
         self.me = api.me()
 
     def on_status(self, tweet):
-        print("[{}] New tweet listened on the stream".format(str(datetime.today())))
+        print("[{}] New tweet listened on the stream".format(str(datetime.now())))
         print("User name: [{}], Tweet text: [{}]".format(tweet.user.name, tweet.text))
         export_tweet(tweet)
 
     def on_error(self, status):
         logger.error("Error detected")
+        logger.error("Error: [{}]".format(status))
 
 
 def listen_stream(api, keywords):

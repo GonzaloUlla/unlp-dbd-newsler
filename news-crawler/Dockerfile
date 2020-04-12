@@ -25,4 +25,4 @@ RUN chmod 644 spiders_logs && \
     cp spiders_logs /etc/logrotate.d/ && \
     crontab cronjob
 
-CMD service cron start && service filebeat start && tail -f /dev/null
+ENTRYPOINT ["./entrypoint.sh"]

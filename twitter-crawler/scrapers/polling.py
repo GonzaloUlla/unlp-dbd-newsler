@@ -17,7 +17,7 @@ logger = logging.getLogger()
 
 
 def get_filename():
-    to_json_timestamp = datetime.today().strftime('%Y%m%d_%H%M%S')
+    to_json_timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     path = os.getcwd()
     return path + '/data/polling_' + to_json_timestamp + '.json'
 
@@ -28,6 +28,7 @@ def extract_tweet(tweet):
     except AttributeError:
         tweet_text = tweet.full_text
     tweet_dict = {
+        'event_id': tweet.id_str,
         'user_id': tweet.user.id,
         'user_name': tweet.user.screen_name,
         'user_description': tweet.user.description,
