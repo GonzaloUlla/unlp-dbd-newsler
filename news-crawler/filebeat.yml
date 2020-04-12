@@ -1,0 +1,9 @@
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /usr/src/app/json/*.json
+
+output.logstash:
+  enabled: true
+  hosts: ["logstash:5044"]

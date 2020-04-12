@@ -1,0 +1,153 @@
+version: '3.7'
+
+services:
+
+  elasticsearch01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+    container_name: elasticsearch01
+    environment:
+      - node.name=elasticsearch01
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=elasticsearch02,elasticsearch03
+      - cluster.initial_master_nodes=elasticsearch01,elasticsearch02,elasticsearch03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - type: volume
+        source: data01
+        target: /usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - elk
+    healthcheck:
+      start_period: 30s
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+  elasticsearch02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+    container_name: elasticsearch02
+    environment:
+      - node.name=elasticsearch02
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=elasticsearch01,elasticsearch03
+      - cluster.initial_master_nodes=elasticsearch01,elasticsearch02,elasticsearch03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - type: volume
+        source: data02
+        target: /usr/share/elasticsearch/data
+    networks:
+      - elk
+    healthcheck:
+      start_period: 30s
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+  elasticsearch03:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+    container_name: elasticsearch03
+    environment:
+      - node.name=elasticsearch03
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=elasticsearch01,elasticsearch02
+      - cluster.initial_master_nodes=elasticsearch01,elasticsearch02,elasticsearch03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - type: volume
+        source: data03
+        target: /usr/share/elasticsearch/data
+    networks:
+      - elk
+    healthcheck:
+      start_period: 30s
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.6.2
+    container_name: kibana
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./elk/kibana-ha.yml:/usr/share/kibana/config/kibana.yml
+    ports:
+      - 5601:5601
+    networks:
+      - elk
+    healthcheck:
+      start_period: 30s
+      test: ["CMD", "curl", "-f", "http://localhost:5601"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.6.2
+    container_name: logstash
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    volumes:
+      - ./elk/logstash-ha.yml:/usr/share/logstash/config/logstash.yml
+      - ./elk/pipeline-ha:/usr/share/logstash/pipeline:ro
+    ports:
+      - 9600:9600
+    networks:
+      - elk
+    healthcheck:
+      start_period: 30s
+      test: ["CMD", "curl", "-f", "http://localhost:9600"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+  cerebro:
+    image: lmenezes/cerebro:0.8.5
+    container_name: cerebro
+    ports:
+      - 9000:9000
+    networks:
+      - elk
+
+  news-crawler:
+    build:
+      context: news-crawler
+    image: news-crawler:1
+    container_name: news-crawler
+    networks:
+      - elk
+
+volumes:
+  data01:
+    driver: local
+  data02:
+    driver: local
+  data03:
+    driver: local
+
+networks:
+  elk:
+    driver: bridge

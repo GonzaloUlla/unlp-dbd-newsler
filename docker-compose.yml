@@ -1,0 +1,94 @@
+version: '3.7'
+
+services:
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+    container_name: elasticsearch
+    environment:
+      - node.name=elasticsearch
+      - cluster.name=es-docker-cluster
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - type: volume
+        source: data
+        target: /usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - elk
+    healthcheck:
+      start_period: 30s
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.6.2
+    container_name: kibana
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./elk/kibana.yml:/usr/share/kibana/config/kibana.yml
+    ports:
+      - 5601:5601
+    networks:
+      - elk
+    healthcheck:
+      start_period: 30s
+      test: ["CMD", "curl", "-f", "http://localhost:5601"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.6.2
+    container_name: logstash
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    volumes:
+      - ./elk/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./elk/pipeline:/usr/share/logstash/pipeline:ro
+    ports:
+      - 9600:9600
+    networks:
+      - elk
+    healthcheck:
+      start_period: 30s
+      test: ["CMD", "curl", "-f", "http://localhost:9600"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+  cerebro:
+    image: lmenezes/cerebro:0.8.5
+    container_name: cerebro
+    ports:
+      - 9000:9000
+    networks:
+      - elk
+
+  news-crawler:
+    build:
+      context: news-crawler
+    image: news-crawler:1
+    container_name: news-crawler
+    networks:
+      - elk
+
+volumes:
+  data:
+    driver: local
+
+networks:
+  elk:
+    driver: bridge

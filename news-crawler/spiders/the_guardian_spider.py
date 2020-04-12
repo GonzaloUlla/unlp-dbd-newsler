@@ -1,20 +1,21 @@
 import scrapy
 
+
 class TheGuardianScrapy(scrapy.Spider):
     name = 'TheGuardian'
 
-    baseUrl = 'https://www.theguardian.com/international'
+    base_url = 'https://www.theguardian.com/international'
 
     start_urls = [
-        baseUrl
+        base_url
     ]
 
     def parse(self, response):
         for title in response.xpath("(//a[@class='u-faux-block-link__overlay js-headline-text'])"):
-            absoluteUrl = title.xpath("@href").get()
-            if "https" not in absoluteUrl:
-                absoluteUrl = 'https://www.theguardian.com/international' + absoluteUrl
+            absolute_url = title.xpath("@href").get()
+            if "https" not in absolute_url:
+                absolute_url = 'https://www.theguardian.com/international' + absolute_url
             yield {
                 'news_text': title.xpath(".//text()").get(),
-                'news_href': absoluteUrl
+                'news_href': absolute_url
             }

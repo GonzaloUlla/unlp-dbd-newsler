@@ -1,0 +1,4 @@
+SHELL=/bin/bash
+PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+*/1 * * * * cd /usr/src/app && ./run_spiders.sh 2>&1 | tee -a logs/run_spiders.log
+*/5 * * * * cd /etc/logrotate.d/ && logrotate -vf spiders_logs

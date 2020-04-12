@@ -1,28 +1,30 @@
 import scrapy
 
+
 class FoxNewsScrapy(scrapy.Spider):
     name = 'FoxNews'
 
-    baseUrl = 'https://www.foxnews.com/world'
+    base_url = 'https://www.foxnews.com/world'
+
     start_urls = [
-        baseUrl
+        base_url
     ]
 
     def parse(self, response):
         for title in response.xpath("//main[@class='main-content']//h2[@class='title']//a"):
-            absoluteUrl = title.xpath("@href").get()
-            if "https" not in absoluteUrl:
-                absoluteUrl = 'https://www.foxnews.com/world' + absoluteUrl
+            absolute_url = title.xpath("@href").get()
+            if "https" not in absolute_url:
+                absolute_url = 'https://www.foxnews.com/world' + absolute_url
             yield {
                 'news_text': title.xpath(".//text()").get(),
-                'news_href': absoluteUrl
+                'news_href': absolute_url
             }
         # Could not use a single xPath for these secondary headers
         for title in response.xpath("//main[@class='main-content']//h4[@class='title']//a"):
-            absoluteUrl = title.xpath("@href").get()
-            if "https" not in absoluteUrl:
-                absoluteUrl = 'https://www.foxnews.com/world' + absoluteUrl
+            absolute_url = title.xpath("@href").get()
+            if "https" not in absolute_url:
+                absolute_url = 'https://www.foxnews.com/world' + absolute_url
             yield {
                 'news_text': title.xpath(".//text()").get(),
-                'news_href': absoluteUrl
+                'news_href': absolute_url
             }
