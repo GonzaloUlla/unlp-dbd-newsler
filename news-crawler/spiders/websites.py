@@ -1,9 +1,28 @@
 """
 Classes for mews-crawler spiders that scrap news websites. Template Method Design Pattern applied.
 """
+import json
+import logging
+import os
+import time
 from datetime import datetime
-from scrapy.crawler import CrawlerProcess
+from hashlib import sha256
+
+from scrapy.crawler import CrawlerRunner
 from scrapy.spiders import Spider
+from multiprocessing import Process, Queue
+from twisted.internet import reactor
+
+
+formatter = '%(levelname)s [%(asctime)s] %(filename)s: %(message)s'
+logging.basicConfig(level=logging.INFO, format=formatter)
+logger = logging.getLogger()
+
+
+def get_filename():
+    to_json_timestamp = datetime.now().strftime('%Y%m%d_%H%M')
+    path = os.getcwd()
+    return path + '/data/websites_' + to_json_timestamp + '.json'
 
 
 class XPathSpider(Spider):
@@ -19,18 +38,21 @@ class XPathSpider(Spider):
         self.absolute_url = base_url
         self.start_urls = start_urls
         self.xpath_list = xpath_list
+        self.news = {}
         super().__init__(name, **kwargs)
 
     def parse(self, response):
         for xpath in self.xpath_list:
             for title in response.xpath(xpath):
                 self._set_absolute_url(title)
-                yield {
-                    'news_timestamp': _get_timestamp(),
+                self.news = {
                     'news_base_url': self._get_base_url(),
                     'news_absolute_url': self._get_absolute_url(),
                     'news_text': self._get_news_text(title)
                 }
+                self._add_event_id()
+                self._export_news()
+                yield self.news
 
     def _set_absolute_url(self, title):
         self.absolute_url = title.xpath("@href").get()
@@ -47,9 +69,14 @@ class XPathSpider(Spider):
     def _get_news_text(title):
         return title.xpath(".//text()").get()
 
+    def _add_event_id(self):
+        event_id = sha256(json.dumps(self.news, sort_keys=True).encode('utf8')).hexdigest()
+        self.news['event_id'] = event_id
 
-def _get_timestamp():
-    return str(datetime.now())
+    def _export_news(self):
+        filename = get_filename()
+        with open(filename, 'a+') as file:
+            file.write(json.dumps(self.news) + '\n')
 
 
 class AlJazeeraSpider(XPathSpider):
@@ -114,10 +141,36 @@ class TheGuardianSpider(XPathSpider):
                          **kwargs)
 
 
-process = CrawlerProcess()
-process.crawl(AlJazeeraSpider)
-process.crawl(CnnSpider)
-process.crawl(DWSpider)
-process.crawl(FoxNewsSpider)
-process.crawl(TheGuardianSpider)
-process.start()
+def run_spider(spider):
+    def future(queue):
+        try:
+            runner = CrawlerRunner()
+            deferred = runner.crawl(spider)
+            deferred.addBoth(lambda _: reactor.stop())
+            reactor.run()
+            queue.put(None)
+        except Exception as exception:
+            queue.put(exception)
+
+    future_queue = Queue()
+    process = Process(target=future, args=(future_queue,))
+    process.start()
+    result = future_queue.get()
+    process.join()
+
+    if result is not None:
+        raise result
+
+
+def main(sleep_time):
+    while True:
+        run_spider(AlJazeeraSpider)
+        run_spider(CnnSpider)
+        run_spider(DWSpider)
+        run_spider(FoxNewsSpider)
+        run_spider(TheGuardianSpider)
+        time.sleep(sleep_time)
+
+
+if __name__ == "__main__":
+    main(60)

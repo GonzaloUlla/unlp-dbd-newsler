@@ -2,7 +2,7 @@
 
 APP_FOLDER=/usr/src/app
 SPIDERS_FOLDER=${APP_FOLDER}/spiders
-JSON_FOLDER=${APP_FOLDER}/json
+JSON_FOLDER=${APP_FOLDER}/data
 LOGS_FOLDER=${APP_FOLDER}/logs
 
 DT_NOW=$(date +%Y%m%d_%H%M)

@@ -7,4 +7,4 @@ filebeat.inputs:
 output.logstash:
   enabled: true
   hosts: ["logstash:5044"]
-  index: 'filebeat-news'
+  index: 'filebeat-twitter'
