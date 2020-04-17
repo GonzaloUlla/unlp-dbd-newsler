@@ -86,33 +86,31 @@ class AlJazeeraSpider(XPathSpider):
                          base_url="https://www.aljazeera.com",
                          xpath_list=["//a//h2[@class='top-sec-title' or @class='top-sec-smalltitle' or "
                                      "@class='topics-sec-item-head']/parent::a"],
-                         start_urls=["https://www.aljazeera.com/news"])
+                         start_urls=["https://www.aljazeera.com/news"],
+                         **kwargs)
 
 
 class CnnSpider(XPathSpider):
 
     def __init__(self, **kwargs):
         super().__init__(name="CNN",
-                         base_url="https://www.cnn.com/world",
+                         base_url="https://www.cnn.com",
                          xpath_list=["(//section[@class='zn zn-world-zone-1 zn-left-fluid-right-stack zn--idx-0 "
                                      "zn--ordinary t-light zn-has-two-containers' or @class='zn zn-world-zone-2 "
                                      "zn-balanced zn--idx-1 zn--ordinary t-light zn-has-multiple-containers "
                                      "zn-has-6-containers']//h3[@class='cd__headline']//a)"],
+                         start_urls=["https://www.cnn.com/world"],   
                          **kwargs)
-
-    def _set_absolute_url(self, title):
-        self.absolute_url = title.xpath("@href").get()
-        if "https" not in self.absolute_url:
-            self.absolute_url = self.base_url + str(self.absolute_url)
 
 
 class DWSpider(XPathSpider):
 
     def __init__(self, **kwargs):
         super().__init__(name="DW",
-                         base_url="https://www.dw.com/en/top-stories/world/s-1429",
+                         base_url="https://www.dw.com",
                          xpath_list=["//a//h2[@class='linkable']/parent::a",
                                      "//a//div[@class='teaserContentWrap']//h2/../parent::a"],
+                         start_urls=["https://www.dw.com/en/top-stories/world/s-1429"],
                          **kwargs)
 
     @staticmethod
@@ -124,9 +122,10 @@ class FoxNewsSpider(XPathSpider):
 
     def __init__(self, **kwargs):
         super().__init__(name="FoxNews",
-                         base_url="https://www.foxnews.com/world",
+                         base_url="https://www.foxnews.com",
                          xpath_list=["//main[@class='main-content']//h2[@class='title']//a",
                                      "//main[@class='main-content']//h4[@class='title']//a"],
+                         start_urls=["https://www.foxnews.com/world"],
                          **kwargs)
 
 
@@ -135,9 +134,36 @@ class TheGuardianSpider(XPathSpider):
 
     def __init__(self, **kwargs):
         super().__init__(name="TheGuardian",
-                         base_url="https://www.theguardian.com/international",
+                         base_url="https://www.theguardian.com",
                          xpath_list=["(//a[@class='u-faux-block-link"
                                      "__overlay js-headline-text'])"],
+                         start_urls=["https://www.theguardian.com/international"],
+                         **kwargs)
+
+
+class BBCSpider(XPathSpider):
+    """Scraps The BBC website"""
+
+    def __init__(self, **kwargs):
+        super().__init__(name="BBC",
+                         base_url="https://www.bbc.com",
+                         xpath_list=["//a[@class='gs-c-promo-heading gs-o-faux-block-link__overlay-link gel-paragon-bold nw-o-link-split__anchor']",
+                                     "//a[@class='gs-c-promo-heading gs-o-faux-block-link__overlay-link gel-pica-bold nw-o-link-split__anchor']",
+                                     "//a[@class='gs-c-promo-heading gs-o-faux-block-link__overlay-link gel-double-pica-bold nw-o-link-split__anchor']"],
+                         start_urls=["https://www.bbc.com/news"],
+                         **kwargs)
+
+
+class NYTimesSpider(XPathSpider):
+    """Scraps the New York Times website"""
+
+    def __init__(self, **kwargs):
+        super().__init__(name="NYTimes",
+                         base_url="https://www.nytimes.com",
+                         xpath_list=["//h2[@class='css-l2vidh e4e4i5l1']//a",
+                                     "//h2[@class='css-y3otqb e134j7ei0']//a",
+                                     "//h2[@class='css-1j9dxys e1xfvim30']//a"],
+                         start_urls=["https://www.nytimes.com/section/world"],
                          **kwargs)
 
 
@@ -169,6 +195,8 @@ def main(sleep_time):
         run_spider(DWSpider)
         run_spider(FoxNewsSpider)
         run_spider(TheGuardianSpider)
+        run_spider(BBCSpider)
+        run_spider(NYTimesSpider)
         time.sleep(sleep_time)
 
 
