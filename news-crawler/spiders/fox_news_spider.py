@@ -14,7 +14,7 @@ class FoxNewsScrapy(scrapy.Spider):
         for title in response.xpath("//main[@class='main-content']//h2[@class='title']//a"):
             absolute_url = title.xpath("@href").get()
             if "https" not in absolute_url:
-                absolute_url = 'https://www.foxnews.com/world' + absolute_url
+                absolute_url = 'https://www.foxnews.com' + absolute_url
             yield {
                 'news_text': title.xpath(".//text()").get(),
                 'news_href': absolute_url
@@ -23,7 +23,7 @@ class FoxNewsScrapy(scrapy.Spider):
         for title in response.xpath("//main[@class='main-content']//h4[@class='title']//a"):
             absolute_url = title.xpath("@href").get()
             if "https" not in absolute_url:
-                absolute_url = 'https://www.foxnews.com/world' + absolute_url
+                absolute_url = 'https://www.foxnews.com' + absolute_url
             yield {
                 'news_text': title.xpath(".//text()").get(),
                 'news_href': absolute_url

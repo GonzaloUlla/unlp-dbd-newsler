@@ -17,7 +17,7 @@ class CnnScrapy(scrapy.Spider):
                 "zn-has-multiple-containers zn-has-6-containers']//h3[@class='cd__headline']//a)"):
             absolute_url = title.xpath("@href").get()
             if "https" not in absolute_url:
-                absolute_url = 'https://www.cnn.com/world' + str(absolute_url)
+                absolute_url = 'https://www.cnn.com' + str(absolute_url)
             yield {
                 'news_text': title.xpath(".//text()").get(),
                 'news_href': absolute_url
