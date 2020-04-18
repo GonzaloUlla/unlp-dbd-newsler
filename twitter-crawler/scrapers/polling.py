@@ -100,5 +100,6 @@ def main(search_query):
 
 
 if __name__ == "__main__":
-    search = "url:aljazeera.com OR url:cnn.com OR url:dw.com OR url:foxnews.com OR url:theguardian.com"
+    search = "url:aljazeera.com OR url:cnn.com OR url:dw.com OR url:foxnews.com OR url:theguardian.com " \
+             "OR url:bbc.com OR url:nytimes.com"
     main(search)

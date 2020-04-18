@@ -85,4 +85,4 @@ def main(keywords):
 
 
 if __name__ == "__main__":
-    main(["aljazeera.com", "cnn.com", "dw.com", "foxnews.com", "theguardian.com"])
+    main(["aljazeera.com", "cnn.com", "dw.com", "foxnews.com", "theguardian.com", "bbc.com", "nytimes.com"])

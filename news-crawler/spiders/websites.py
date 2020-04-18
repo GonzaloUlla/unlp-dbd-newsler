@@ -13,7 +13,6 @@ from scrapy.spiders import Spider
 from multiprocessing import Process, Queue
 from twisted.internet import reactor
 
-
 formatter = '%(levelname)s [%(asctime)s] %(filename)s: %(message)s'
 logging.basicConfig(level=logging.INFO, format=formatter)
 logger = logging.getLogger()
@@ -99,7 +98,7 @@ class CnnSpider(XPathSpider):
                                      "zn--ordinary t-light zn-has-two-containers' or @class='zn zn-world-zone-2 "
                                      "zn-balanced zn--idx-1 zn--ordinary t-light zn-has-multiple-containers "
                                      "zn-has-6-containers']//h3[@class='cd__headline']//a)"],
-                         start_urls=["https://www.cnn.com/world"],   
+                         start_urls=["https://www.cnn.com/world"],
                          **kwargs)
 
 
@@ -147,9 +146,12 @@ class BBCSpider(XPathSpider):
     def __init__(self, **kwargs):
         super().__init__(name="BBC",
                          base_url="https://www.bbc.com",
-                         xpath_list=["//a[@class='gs-c-promo-heading gs-o-faux-block-link__overlay-link gel-paragon-bold nw-o-link-split__anchor']",
-                                     "//a[@class='gs-c-promo-heading gs-o-faux-block-link__overlay-link gel-pica-bold nw-o-link-split__anchor']",
-                                     "//a[@class='gs-c-promo-heading gs-o-faux-block-link__overlay-link gel-double-pica-bold nw-o-link-split__anchor']"],
+                         xpath_list=["//a[@class='gs-c-promo-heading gs-o-faux-block-link__overlay-link "
+                                     "gel-paragon-bold nw-o-link-split__anchor']",
+                                     "//a[@class='gs-c-promo-heading gs-o-faux-block-link__overlay-link"
+                                     " gel-pica-bold nw-o-link-split__anchor']",
+                                     "//a[@class='gs-c-promo-heading gs-o-faux-block-link__overlay-link"
+                                     " gel-double-pica-bold nw-o-link-split__anchor']"],
                          start_urls=["https://www.bbc.com/news"],
                          **kwargs)
 
