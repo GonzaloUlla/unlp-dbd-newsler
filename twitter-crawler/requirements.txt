@@ -1,2 +1,5 @@
 tweepy==3.8.0
 jsonlines==1.2.0
+pyenchant==3.0.1
+nltk==3.5
+textblob==0.15.3

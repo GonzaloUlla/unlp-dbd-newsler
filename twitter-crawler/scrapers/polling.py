@@ -1,54 +1,26 @@
 """
 Twitter Scraper to poll last tweets periodically according to a specific query.
 """
-import logging
-import os
 import time
-from datetime import datetime
 
 import jsonlines
 import tweepy
 
-from .config import create_api
+from .sentiments import TweetAnalyzer
+from .utils import create_api, get_logger, get_filename, extract_tweet
 
-formatter = '%(levelname)s [%(asctime)s] %(filename)s: %(message)s'
-logging.basicConfig(level=logging.INFO, format=formatter)
-logger = logging.getLogger()
-
-
-def get_filename():
-    to_json_timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    path = os.getcwd()
-    return path + '/data/polling_' + to_json_timestamp + '.json'
+logger = get_logger()
 
 
-def extract_tweet(tweet):
+def process_tweet(tweet):
     try:
         tweet_text = tweet.retweeted_status.full_text
     except AttributeError:
         tweet_text = tweet.full_text
-    tweet_dict = {
-        'event_id': tweet.id_str,
-        'user_id': tweet.user.id,
-        'user_name': tweet.user.screen_name,
-        'user_description': tweet.user.description,
-        'user_location': tweet.user.location,
-        'user_following': tweet.user.friends_count,
-        'user_followers': tweet.user.followers_count,
-        'user_tweets': tweet.user.statuses_count,
-        'user_verified': tweet.user.verified,
-        'user_creation_timestamp': str(tweet.user.created_at),
-        'tweet_id': tweet.id,
-        'tweet_text': tweet_text,
-        'tweet_retweets': tweet.retweet_count,
-        'tweet_likes': tweet.favorite_count,
-        'tweet_urls': tweet.entities['urls'],
-        'tweet_hashtags': tweet.entities['hashtags'],
-        'tweet_user_mentions': tweet.entities['user_mentions'],
-        'tweet_source': tweet.source,
-        'tweet_timestamp': str(tweet.created_at),
-        'tweet_streaming': False
-    }
+    analyzer = TweetAnalyzer()
+    tweet_dict = extract_tweet(tweet, tweet_text, streaming=False)
+    sentiments = analyzer.get_sentiment(tweet_dict["tweet_text"])
+    tweet_dict.update(sentiments)
     return tweet_dict
 
 
@@ -65,22 +37,24 @@ def scrap_tweets(api, query, tweets_count):
     tweets_num = 0
 
     for tweet in cursor_list:
-        tweets_list.append(extract_tweet(tweet))
+        tweets_list.append(process_tweet(tweet))
         tweets_num += + 1
 
-    end_time = time.time()
-    duration_time = round(end_time - start_time, 2)
+    elapsed_time = round(time.time() - start_time, 2)
 
-    logger.info('Number of tweets scraped is {}'.format(tweets_num))
-    logger.info('Time taken to complete is {} seconds'.format(duration_time))
+    logger.info('{} tweets polled in {} seconds'.format(tweets_num, elapsed_time))
     return tweets_list
 
 
 def export_tweets(tweets):
-    filename = get_filename()
+    start_time = time.time()
+
+    filename = get_filename('polling')
     with jsonlines.open(filename, mode='w') as writer:
         writer.write_all(tweets)
-    logger.info('Tweets exported to: {}'.format(filename))
+
+    elapsed_time = round(time.time() - start_time, 2)
+    logger.info('{} polled tweets exported to: {} in {} seconds'.format(len(tweets), filename, elapsed_time))
 
 
 def main(search_query):
@@ -100,5 +74,6 @@ def main(search_query):
 
 
 if __name__ == "__main__":
-    search = "url:aljazeera.com OR url:cnn.com OR url:dw.com OR url:foxnews.com OR url:theguardian.com"
+    search = "url:aljazeera.com OR url:cnn.com OR url:dw.com OR url:foxnews.com OR url:theguardian.com " \
+             "OR url:bbc.com OR url:nytimes.com"
     main(search)
