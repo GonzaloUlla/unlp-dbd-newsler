@@ -20,7 +20,8 @@ RUN python3 -m pip install -r requirements.txt
 
 ADD . /usr/src/app/
 
-RUN chmod 644 spiders_logs && \
+RUN chmod go-w /etc/filebeat/filebeat.yml && \
+    chmod 644 spiders_logs && \
     chown root:root spiders_logs && \
     cp spiders_logs /etc/logrotate.d/ && \
     crontab cronjob
