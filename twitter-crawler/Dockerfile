@@ -22,7 +22,8 @@ RUN python3 -m pip install -r requirements.txt && \
 
 ADD . /usr/src/app/
 
-RUN chmod 644 scrapers_logs && \
+RUN chmod go-w /etc/filebeat/filebeat.yml && \
+    chmod 644 scrapers_logs && \
     chown root:root scrapers_logs && \
     cp scrapers_logs /etc/logrotate.d/ && \
     crontab cronjob
