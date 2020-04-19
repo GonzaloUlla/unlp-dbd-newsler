@@ -1,3 +1,3 @@
 SHELL=/bin/bash
 PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-*/5 * * * * cd /etc/logrotate.d/ && logrotate -vf scrapers_logs
+*/30 * * * * cd /etc/logrotate.d/ && logrotate -vf scrapers_logs
