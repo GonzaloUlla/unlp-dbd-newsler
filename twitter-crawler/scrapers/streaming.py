@@ -2,56 +2,28 @@
 Twitter Scraper to stream tweets in real time according to specific keywords.
 """
 import json
-import logging
-import os
-from datetime import datetime
 
 import tweepy
 
-from .config import create_api
+from .sentiments import TweetAnalyzer
+from .utils import create_api, get_logger, get_filename, extract_tweet
 
-formatter = '%(levelname)s [%(asctime)s] %(filename)s: %(message)s'
-logging.basicConfig(level=logging.INFO, format=formatter)
-logger = logging.getLogger()
+logger = get_logger()
 
 
-def extract_tweet(tweet):
-    tweet_dict = {
-        'event_id': tweet.id_str,
-        'user_id': tweet.user.id,
-        'user_name': tweet.user.screen_name,
-        'user_description': tweet.user.description,
-        'user_location': tweet.user.location,
-        'user_following': tweet.user.friends_count,
-        'user_followers': tweet.user.followers_count,
-        'user_tweets': tweet.user.statuses_count,
-        'user_verified': tweet.user.verified,
-        'user_creation_timestamp': str(tweet.user.created_at),
-        'tweet_id': tweet.id,
-        'tweet_text': tweet.text,
-        'tweet_retweets': tweet.retweet_count,
-        'tweet_likes': tweet.favorite_count,
-        'tweet_urls': tweet.entities['urls'],
-        'tweet_hashtags': tweet.entities['hashtags'],
-        'tweet_user_mentions': tweet.entities['user_mentions'],
-        'tweet_source': tweet.source,
-        'tweet_timestamp': str(tweet.created_at),
-        'tweet_streaming': True
-    }
+def process_tweet(tweet):
+    analyzer = TweetAnalyzer()
+    tweet_dict = extract_tweet(tweet)
+    sentiments = analyzer.get_sentiment(tweet_dict["tweet_text"])
+    tweet_dict.update(sentiments)
     return tweet_dict
 
 
-def get_filename():
-    to_json_timestamp = datetime.now().strftime('%Y%m%d_%H%M')
-    path = os.getcwd()
-    return path + '/data/streaming_' + to_json_timestamp + '.json'
-
-
 def export_tweet(tweet):
-    filename = get_filename()
+    filename = get_filename('streaming')
     with open(filename, 'a+') as file:
-        file.write(json.dumps(extract_tweet(tweet)) + '\n')
-    logger.info('Tweets exported to: {}'.format(filename))
+        file.write(json.dumps(process_tweet(tweet)) + '\n')
+    logger.debug('Tweet exported to: {}'.format(filename))
 
 
 class NewsStreamListener(tweepy.StreamListener):
@@ -62,8 +34,7 @@ class NewsStreamListener(tweepy.StreamListener):
         self.me = api.me()
 
     def on_status(self, tweet):
-        print("[{}] New tweet listened on the stream".format(str(datetime.now())))
-        print("User name: [{}], Tweet text: [{}]".format(tweet.user.name, tweet.text))
+        logger.info("New tweet streamed with text: [{}]".format(tweet.text[:50] + "..."))
         export_tweet(tweet)
 
     def on_error(self, status):
