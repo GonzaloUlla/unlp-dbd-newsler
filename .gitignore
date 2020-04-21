@@ -119,6 +119,9 @@ venv.bak/
 # PyCharm project settings
 .idea
 
+# VSCode project settings
+.vscode
+
 # Rope project settings
 .ropeproject
 
@@ -134,4 +137,4 @@ dmypy.json
 .pyre/
 
 # Data
-*.json
+*/data/*.json
