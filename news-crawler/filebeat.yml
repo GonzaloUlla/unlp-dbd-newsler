@@ -1,10 +1,23 @@
 filebeat.inputs:
+
 - type: log
   enabled: true
   paths:
     - /usr/src/app/data/*.json
+  fields:
+    file_type: json
+
+- type: log
+  enabled: true
+  paths:
+    - /usr/src/app/logs/*.log
+  fields:
+    file_type: log
+  multiline.pattern: ^(DEBUG|INFO|WARN|ERROR|2020)
+  multiline.negate: true
+  multiline.match: after
 
 output.logstash:
   enabled: true
   hosts: ["logstash:5044"]
-  index: 'filebeat-news'
+  index: 'news-crawler'
