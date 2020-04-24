@@ -112,6 +112,7 @@ services:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
     volumes:
       - ./elk/logstash-ha.yml:/usr/share/logstash/config/logstash.yml
+      - ./elk/elasticsearch-template-ha.json:/usr/share/logstash/config/elasticsearch-template-ha.json
       - ./elk/pipeline-ha:/usr/share/logstash/pipeline:ro
     ports:
       - 9600:9600
