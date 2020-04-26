@@ -15,6 +15,8 @@ Diseño de Bases de Datos (DBD) - MS in Software Engineering 2019/2020 - UNLP
     - [Running everything with Docker](#running-everything-with-docker)
     - [Running only news-crawler](#running-only-news-crawler)
     - [Running only twitter-crawler](#running-only-twitter-crawler)
+  - [Dashboard](#dashboard)
+    - [Import in Kibana](#import-in-kibana)    
   - [Conventions](#conventions)
     - [Style Guide](#style-guide)
     - [Branching Model](#branching-model)
@@ -96,6 +98,15 @@ python3.8 -m scrapers.polling scrapers/polling.py
 cd twitter-crawler
 python3.8 -m scrapers.streaming scrapers/streaming.py
 ```
+## Dashboard
+
+### Import in Kibana
+
+- Open Kibana
+- Select option "Management"
+- Select option "Saved objects"
+- Select option "Import"
+- Select file .json
 
 ## Conventions
 
