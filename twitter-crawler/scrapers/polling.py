@@ -2,26 +2,28 @@
 Twitter Scraper to poll last tweets periodically according to a specific query.
 """
 import time
+import json
 
 import jsonlines
 import tweepy
 
+from .generators import PollingTweetGenerator
 from .sentiments import TweetAnalyzer
-from .utils import create_api, get_logger, get_filename, extract_tweet
+from .utils import create_api, get_logger, get_filename
 
 logger = get_logger()
 
 
 def process_tweet(tweet):
-    try:
-        tweet_text = tweet.retweeted_status.full_text
-    except AttributeError:
-        tweet_text = tweet.full_text
     analyzer = TweetAnalyzer()
-    tweet_dict = extract_tweet(tweet, tweet_text, streaming=False)
-    sentiments = analyzer.get_sentiment(tweet_dict["tweet_text"])
-    tweet_dict.update(sentiments)
-    return tweet_dict
+
+    polling_tweet = PollingTweetGenerator(tweet._json).generate()
+    sentiments = analyzer.get_sentiment(polling_tweet["tweet_text"])
+    polling_tweet.update(sentiments)
+
+    logger.debug("Processed Tweet JSON to export: [{}]".format(json.dumps(polling_tweet)))
+
+    return polling_tweet
 
 
 def scrap_tweets(api, query, tweets_count):
@@ -58,18 +60,20 @@ def export_tweets(tweets):
 
 
 def main(search_query):
-    """Polls Twitter API every 5 seconds to scrap and export latest 100 tweets matching a search query."""
+    """Polls Twitter API to scrap and export latest 100 tweets matching a search query."""
+
+    tweets_number = 100  # 100 tweets per request (API MAX LIMIT)
+    rounds_number = 10  # Export to file each 10 requests
 
     logger.info("Starting polling scraper...")
     api = create_api()
-
-    tweets_number = 100  # 100 tweets per request (API MAX LIMIT)
+    logger.info("Polling {} tweets per request and exporting them each {} requests"
+                .format(tweets_number, rounds_number))
 
     while True:
         tweets_list = []
-        for i in range(0, 12):
+        for i in range(0, rounds_number):
             tweets_list.extend(scrap_tweets(api, search_query, tweets_number))
-            time.sleep(5)  # 5 sec sleep time = 12 requests per minute = 180 requests per 15 minutes (API MAX LIMIT)
         export_tweets(tweets_list)
 
 

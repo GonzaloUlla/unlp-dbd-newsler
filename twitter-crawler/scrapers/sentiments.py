@@ -109,7 +109,6 @@ class TweetAnalyzer(object):
                            'tweet_sentiment_label': 'positive' if analysis.sentiment.polarity > 0
                            else 'neutral' if analysis.sentiment.polarity == 0 else 'negative'}
 
-        elapsed_time = time.time() - start_time
-        logger.debug("Tweet sentiments analyzed in {} seconds: [{}]".format(round(elapsed_time, 2),
-                                                                            str(tweet_sentiment)))
+        elapsed_time = round(time.time() - start_time, 4)
+        logger.debug("Tweet sentiments analyzed in {} seconds: [{}]".format(elapsed_time, str(tweet_sentiment)))
         return tweet_sentiment
