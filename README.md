@@ -67,18 +67,11 @@ docker-compose -f docker-compose-ha.yml up -d
 
 ### Running only news-crawler
 
-- Run one Spider
-
-```bash
-# Check scrapy.org
-cd news-crawler
-scrapy runspider spiders/the_guardian_spider.py -o data/the_guardian_spider.json 2>&1
-```
-
 - Run all Spiders (WIP: Template Method version)
 
 ```bash
-python3.8 news-crawler/spiders/websites.py
+cd news-crawler
+python3.8 spiders/websites.py
 ```
 
 ### Running only twitter-crawler
