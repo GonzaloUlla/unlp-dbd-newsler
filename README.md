@@ -15,8 +15,8 @@ Diseño de Bases de Datos (DBD) - MS in Software Engineering 2019/2020 - UNLP
     - [Running everything with Docker](#running-everything-with-docker)
     - [Running only news-crawler](#running-only-news-crawler)
     - [Running only twitter-crawler](#running-only-twitter-crawler)
-  - [Dashboard](#dashboard)
-    - [Import in Kibana](#import-in-kibana)    
+  - [Kibana Dashboard](#kibana-dashboard)
+    - [Import Dashboard to Kibana](#import-dashboard-to-kibana)
   - [Conventions](#conventions)
     - [Style Guide](#style-guide)
     - [Branching Model](#branching-model)
@@ -29,8 +29,12 @@ Diseño de Bases de Datos (DBD) - MS in Software Engineering 2019/2020 - UNLP
 
 - Python 3.8
   - How to install latest stable release [here](https://tecadmin.net/install-python-3-8-ubuntu/)
-- Scrapy 2.0.1, Tweepy 3.8.0 and JsonLines 1.2.0
+- Pip Packages:
   - `pip install -r requirements.txt`
+- News Crawler:
+  - Scrapy 2.0.1, Twisted 20.3.0, Supervisor 4.1.0
+- Twitter Crawler:
+  - Tweepy 3.8.0, JsonLines 1.2.0, PyEnchant 3.0.1, NLTK 3.5, TextBlob 0.15.3, Supervisor 4.1.0
 
 ### Configuration
 
@@ -41,6 +45,7 @@ CONSUMER_KEY=<KEY-WITHOUT-QUOTES>
 CONSUMER_SECRET=<KEY-WITHOUT-QUOTES>
 ACCESS_TOKEN=<KEY-WITHOUT-QUOTES>
 ACCESS_TOKEN_SECRET=<KEY-WITHOUT-QUOTES>
+LOGGING_LEVEL=<DEBUG|INFO|WARN|ERROR>
 ```
 
 - If you are not using Docker, remember to export the previous keys
@@ -50,6 +55,7 @@ export CONSUMER_KEY=<KEY-WITHOUT-QUOTES>
 export CONSUMER_SECRET=<KEY-WITHOUT-QUOTES>
 export ACCESS_TOKEN=<KEY-WITHOUT-QUOTES>
 export ACCESS_TOKEN_SECRET=<KEY-WITHOUT-QUOTES>
+export LOGGING_LEVEL=<DEBUG|INFO|WARN|ERROR>
 ```
 
 ## Getting Started
@@ -69,7 +75,7 @@ docker-compose -f docker-compose-ha.yml up -d
 
 ### Running only news-crawler
 
-- Run all Spiders (WIP: Template Method version)
+- Run all Spiders
 
 ```bash
 cd news-crawler
@@ -91,9 +97,10 @@ python3.8 -m scrapers.polling scrapers/polling.py
 cd twitter-crawler
 python3.8 -m scrapers.streaming scrapers/streaming.py
 ```
-## Dashboard
 
-### Import in Kibana
+## Kibana Dashboard
+
+### Import Dashboard to Kibana
 
 - Open Kibana
 - Select option "Management"

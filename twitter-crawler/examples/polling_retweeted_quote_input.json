@@ -1,0 +1,499 @@
+{
+  "created_at": "Mon Apr 27 00:35:42 +0000 2020",
+  "id": 1254569877827878913,
+  "id_str": "1254569877827878913",
+  "full_text": "RT @JackFell13: \"The Nazis migrated to America to vaccinate your children because they couldn't use gas chambers.\"\n\nWut?\n\nhttps://t.co/uieg\u2026",
+  "truncated": false,
+  "display_text_range": [
+    0,
+    140
+  ],
+  "entities": {
+    "hashtags": [],
+    "symbols": [],
+    "user_mentions": [
+      {
+        "screen_name": "JackFell13",
+        "name": "Jack Fell",
+        "id": 2688592627,
+        "id_str": "2688592627",
+        "indices": [
+          3,
+          14
+        ]
+      }
+    ],
+    "urls": []
+  },
+  "metadata": {
+    "iso_language_code": "en",
+    "result_type": "recent"
+  },
+  "source": "<a href=\"https://mobile.twitter.com\" rel=\"nofollow\">Twitter Web App</a>",
+  "in_reply_to_status_id": null,
+  "in_reply_to_status_id_str": null,
+  "in_reply_to_user_id": null,
+  "in_reply_to_user_id_str": null,
+  "in_reply_to_screen_name": null,
+  "user": {
+    "id": 1210032478225915905,
+    "id_str": "1210032478225915905",
+    "name": "Cordial Russian Bot",
+    "screen_name": "BotCordial",
+    "location": "",
+    "description": "Stay cozy.",
+    "url": null,
+    "entities": {
+      "description": {
+        "urls": []
+      }
+    },
+    "protected": false,
+    "followers_count": 475,
+    "friends_count": 702,
+    "listed_count": 0,
+    "created_at": "Thu Dec 26 03:00:17 +0000 2019",
+    "favourites_count": 8212,
+    "utc_offset": null,
+    "time_zone": null,
+    "geo_enabled": false,
+    "verified": false,
+    "statuses_count": 3559,
+    "lang": null,
+    "contributors_enabled": false,
+    "is_translator": false,
+    "is_translation_enabled": false,
+    "profile_background_color": "F5F8FA",
+    "profile_background_image_url": null,
+    "profile_background_image_url_https": null,
+    "profile_background_tile": false,
+    "profile_image_url": "http://pbs.twimg.com/profile_images/1253776449867321344/mDYcOXcT_normal.jpg",
+    "profile_image_url_https": "https://pbs.twimg.com/profile_images/1253776449867321344/mDYcOXcT_normal.jpg",
+    "profile_banner_url": "https://pbs.twimg.com/profile_banners/1210032478225915905/1587744937",
+    "profile_link_color": "1DA1F2",
+    "profile_sidebar_border_color": "C0DEED",
+    "profile_sidebar_fill_color": "DDEEF6",
+    "profile_text_color": "333333",
+    "profile_use_background_image": true,
+    "has_extended_profile": true,
+    "default_profile": true,
+    "default_profile_image": false,
+    "following": false,
+    "follow_request_sent": false,
+    "notifications": false,
+    "translator_type": "none"
+  },
+  "geo": null,
+  "coordinates": null,
+  "place": null,
+  "contributors": null,
+  "retweeted_status": {
+    "created_at": "Mon Apr 27 00:17:44 +0000 2020",
+    "id": 1254565356603166726,
+    "id_str": "1254565356603166726",
+    "full_text": "\"The Nazis migrated to America to vaccinate your children because they couldn't use gas chambers.\"\n\nWut?\n\nhttps://t.co/uieg0MrP7f https://t.co/3tx2V0Usua https://t.co/PGPp5qizeH",
+    "truncated": false,
+    "display_text_range": [
+      0,
+      153
+    ],
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "user_mentions": [],
+      "urls": [
+        {
+          "url": "https://t.co/uieg0MrP7f",
+          "expanded_url": "https://www.cnn.com/2019/06/10/health/ny-measles-response/index.html",
+          "display_url": "cnn.com/2019/06/10/hea\u2026",
+          "indices": [
+            106,
+            129
+          ]
+        },
+        {
+          "url": "https://t.co/3tx2V0Usua",
+          "expanded_url": "https://twitter.com/Education4Libs/status/1254553348155543552",
+          "display_url": "twitter.com/Education4Libs\u2026",
+          "indices": [
+            130,
+            153
+          ]
+        }
+      ],
+      "media": [
+        {
+          "id": 1254563653648625664,
+          "id_str": "1254563653648625664",
+          "indices": [
+            154,
+            177
+          ],
+          "media_url": "http://pbs.twimg.com/media/EWka_vvXsAADUGG.jpg",
+          "media_url_https": "https://pbs.twimg.com/media/EWka_vvXsAADUGG.jpg",
+          "url": "https://t.co/PGPp5qizeH",
+          "display_url": "pic.twitter.com/PGPp5qizeH",
+          "expanded_url": "https://twitter.com/JackFell13/status/1254565356603166726/photo/1",
+          "type": "photo",
+          "sizes": {
+            "small": {
+              "w": 511,
+              "h": 680,
+              "resize": "fit"
+            },
+            "thumb": {
+              "w": 150,
+              "h": 150,
+              "resize": "crop"
+            },
+            "medium": {
+              "w": 901,
+              "h": 1200,
+              "resize": "fit"
+            },
+            "large": {
+              "w": 1080,
+              "h": 1438,
+              "resize": "fit"
+            }
+          }
+        }
+      ]
+    },
+    "extended_entities": {
+      "media": [
+        {
+          "id": 1254563653648625664,
+          "id_str": "1254563653648625664",
+          "indices": [
+            154,
+            177
+          ],
+          "media_url": "http://pbs.twimg.com/media/EWka_vvXsAADUGG.jpg",
+          "media_url_https": "https://pbs.twimg.com/media/EWka_vvXsAADUGG.jpg",
+          "url": "https://t.co/PGPp5qizeH",
+          "display_url": "pic.twitter.com/PGPp5qizeH",
+          "expanded_url": "https://twitter.com/JackFell13/status/1254565356603166726/photo/1",
+          "type": "photo",
+          "sizes": {
+            "small": {
+              "w": 511,
+              "h": 680,
+              "resize": "fit"
+            },
+            "thumb": {
+              "w": 150,
+              "h": 150,
+              "resize": "crop"
+            },
+            "medium": {
+              "w": 901,
+              "h": 1200,
+              "resize": "fit"
+            },
+            "large": {
+              "w": 1080,
+              "h": 1438,
+              "resize": "fit"
+            }
+          }
+        },
+        {
+          "id": 1254563653652754433,
+          "id_str": "1254563653652754433",
+          "indices": [
+            154,
+            177
+          ],
+          "media_url": "http://pbs.twimg.com/media/EWka_vwWsAERXks.jpg",
+          "media_url_https": "https://pbs.twimg.com/media/EWka_vwWsAERXks.jpg",
+          "url": "https://t.co/PGPp5qizeH",
+          "display_url": "pic.twitter.com/PGPp5qizeH",
+          "expanded_url": "https://twitter.com/JackFell13/status/1254565356603166726/photo/1",
+          "type": "photo",
+          "sizes": {
+            "thumb": {
+              "w": 150,
+              "h": 150,
+              "resize": "crop"
+            },
+            "large": {
+              "w": 573,
+              "h": 866,
+              "resize": "fit"
+            },
+            "medium": {
+              "w": 573,
+              "h": 866,
+              "resize": "fit"
+            },
+            "small": {
+              "w": 450,
+              "h": 680,
+              "resize": "fit"
+            }
+          }
+        },
+        {
+          "id": 1254563653640237056,
+          "id_str": "1254563653640237056",
+          "indices": [
+            154,
+            177
+          ],
+          "media_url": "http://pbs.twimg.com/media/EWka_vtXsAAN33J.jpg",
+          "media_url_https": "https://pbs.twimg.com/media/EWka_vtXsAAN33J.jpg",
+          "url": "https://t.co/PGPp5qizeH",
+          "display_url": "pic.twitter.com/PGPp5qizeH",
+          "expanded_url": "https://twitter.com/JackFell13/status/1254565356603166726/photo/1",
+          "type": "photo",
+          "sizes": {
+            "thumb": {
+              "w": 150,
+              "h": 150,
+              "resize": "crop"
+            },
+            "large": {
+              "w": 1079,
+              "h": 847,
+              "resize": "fit"
+            },
+            "small": {
+              "w": 680,
+              "h": 534,
+              "resize": "fit"
+            },
+            "medium": {
+              "w": 1079,
+              "h": 847,
+              "resize": "fit"
+            }
+          }
+        },
+        {
+          "id": 1254565315771617281,
+          "id_str": "1254565315771617281",
+          "indices": [
+            154,
+            177
+          ],
+          "media_url": "http://pbs.twimg.com/media/EWkcgfoX0AEhN9z.jpg",
+          "media_url_https": "https://pbs.twimg.com/media/EWkcgfoX0AEhN9z.jpg",
+          "url": "https://t.co/PGPp5qizeH",
+          "display_url": "pic.twitter.com/PGPp5qizeH",
+          "expanded_url": "https://twitter.com/JackFell13/status/1254565356603166726/photo/1",
+          "type": "photo",
+          "sizes": {
+            "medium": {
+              "w": 250,
+              "h": 237,
+              "resize": "fit"
+            },
+            "small": {
+              "w": 250,
+              "h": 237,
+              "resize": "fit"
+            },
+            "thumb": {
+              "w": 150,
+              "h": 150,
+              "resize": "crop"
+            },
+            "large": {
+              "w": 250,
+              "h": 237,
+              "resize": "fit"
+            }
+          }
+        }
+      ]
+    },
+    "metadata": {
+      "iso_language_code": "en",
+      "result_type": "recent"
+    },
+    "source": "<a href=\"https://mobile.twitter.com\" rel=\"nofollow\">Twitter Web App</a>",
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {
+      "id": 2688592627,
+      "id_str": "2688592627",
+      "name": "Jack Fell",
+      "screen_name": "JackFell13",
+      "location": "",
+      "description": "Ain't no mercy there for me.\n\nFormer Emperor God King President. \n\nTelegram: \u2622 F A L L O U T \u2622\nhttps://t.co/uzQC98cOZT",
+      "url": null,
+      "entities": {
+        "description": {
+          "urls": [
+            {
+              "url": "https://t.co/uzQC98cOZT",
+              "expanded_url": "http://t.me/TheFallout",
+              "display_url": "t.me/TheFallout",
+              "indices": [
+                95,
+                118
+              ]
+            }
+          ]
+        }
+      },
+      "protected": false,
+      "followers_count": 886,
+      "friends_count": 801,
+      "listed_count": 0,
+      "created_at": "Mon Jul 28 23:13:16 +0000 2014",
+      "favourites_count": 6575,
+      "utc_offset": null,
+      "time_zone": null,
+      "geo_enabled": true,
+      "verified": false,
+      "statuses_count": 1723,
+      "lang": null,
+      "contributors_enabled": false,
+      "is_translator": false,
+      "is_translation_enabled": false,
+      "profile_background_color": "C0DEED",
+      "profile_background_image_url": "http://abs.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_image_url_https": "https://abs.twimg.com/images/themes/theme1/bg.png",
+      "profile_background_tile": false,
+      "profile_image_url": "http://pbs.twimg.com/profile_images/1237106284526100480/Ecz3Aprn_normal.jpg",
+      "profile_image_url_https": "https://pbs.twimg.com/profile_images/1237106284526100480/Ecz3Aprn_normal.jpg",
+      "profile_banner_url": "https://pbs.twimg.com/profile_banners/2688592627/1586541187",
+      "profile_link_color": "1DA1F2",
+      "profile_sidebar_border_color": "C0DEED",
+      "profile_sidebar_fill_color": "DDEEF6",
+      "profile_text_color": "333333",
+      "profile_use_background_image": true,
+      "has_extended_profile": false,
+      "default_profile": true,
+      "default_profile_image": false,
+      "following": false,
+      "follow_request_sent": false,
+      "notifications": false,
+      "translator_type": "none"
+    },
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "is_quote_status": true,
+    "quoted_status_id": 1254553348155543552,
+    "quoted_status_id_str": "1254553348155543552",
+    "quoted_status": {
+      "created_at": "Sun Apr 26 23:30:01 +0000 2020",
+      "id": 1254553348155543552,
+      "id_str": "1254553348155543552",
+      "full_text": "The Nazis never went away.\n\nThey migrated to America.\n\nBut they\u2019re no longer using gas chambers.\n\nThey\u2019re using vaccines to do the job slowly &amp; quietly instead.\n\nWake up &amp; research.",
+      "truncated": false,
+      "display_text_range": [
+        0,
+        189
+      ],
+      "entities": {
+        "hashtags": [],
+        "symbols": [],
+        "user_mentions": [],
+        "urls": []
+      },
+      "metadata": {
+        "iso_language_code": "en",
+        "result_type": "recent"
+      },
+      "source": "<a href=\"http://twitter.com/download/iphone\" rel=\"nofollow\">Twitter for iPhone</a>",
+      "in_reply_to_status_id": null,
+      "in_reply_to_status_id_str": null,
+      "in_reply_to_user_id": null,
+      "in_reply_to_user_id_str": null,
+      "in_reply_to_screen_name": null,
+      "user": {
+        "id": 817661098988019712,
+        "id_str": "817661098988019712",
+        "name": "Educating Liberals \u2b50\ufe0f\u2b50\ufe0f\u2b50\ufe0f",
+        "screen_name": "Education4Libs",
+        "location": "Minnesota, USA",
+        "description": "Digital soldier. Followed by @GenFlynn. Mentioned by Q. Retweeted by Trump. Shadowbanned by Twitter. Podcast w/ @Qanon_Obiwan called Pepe\u2019s Corner #WWG1WGA \ud83c\uddfa\ud83c\uddf8",
+        "url": "https://t.co/rW7Jqu2RSe",
+        "entities": {
+          "url": {
+            "urls": [
+              {
+                "url": "https://t.co/rW7Jqu2RSe",
+                "expanded_url": "http://Patreon.com/E4L",
+                "display_url": "Patreon.com/E4L",
+                "indices": [
+                  0,
+                  23
+                ]
+              }
+            ]
+          },
+          "description": {
+            "urls": []
+          }
+        },
+        "protected": false,
+        "followers_count": 520984,
+        "friends_count": 278562,
+        "listed_count": 2199,
+        "created_at": "Sat Jan 07 09:16:12 +0000 2017",
+        "favourites_count": 134066,
+        "utc_offset": null,
+        "time_zone": null,
+        "geo_enabled": true,
+        "verified": false,
+        "statuses_count": 9665,
+        "lang": null,
+        "contributors_enabled": false,
+        "is_translator": false,
+        "is_translation_enabled": false,
+        "profile_background_color": "F5F8FA",
+        "profile_background_image_url": null,
+        "profile_background_image_url_https": null,
+        "profile_background_tile": false,
+        "profile_image_url": "http://pbs.twimg.com/profile_images/1127981592696115202/WBcMbFd-_normal.jpg",
+        "profile_image_url_https": "https://pbs.twimg.com/profile_images/1127981592696115202/WBcMbFd-_normal.jpg",
+        "profile_banner_url": "https://pbs.twimg.com/profile_banners/817661098988019712/1563879746",
+        "profile_link_color": "1DA1F2",
+        "profile_sidebar_border_color": "C0DEED",
+        "profile_sidebar_fill_color": "DDEEF6",
+        "profile_text_color": "333333",
+        "profile_use_background_image": true,
+        "has_extended_profile": true,
+        "default_profile": true,
+        "default_profile_image": false,
+        "following": false,
+        "follow_request_sent": false,
+        "notifications": false,
+        "translator_type": "none"
+      },
+      "geo": null,
+      "coordinates": null,
+      "place": null,
+      "contributors": null,
+      "is_quote_status": false,
+      "retweet_count": 2318,
+      "favorite_count": 5458,
+      "favorited": false,
+      "retweeted": false,
+      "lang": "en"
+    },
+    "retweet_count": 5,
+    "favorite_count": 21,
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "en"
+  },
+  "is_quote_status": true,
+  "quoted_status_id": 1254553348155543552,
+  "quoted_status_id_str": "1254553348155543552",
+  "retweet_count": 5,
+  "favorite_count": 0,
+  "favorited": false,
+  "retweeted": false,
+  "lang": "en"
+}

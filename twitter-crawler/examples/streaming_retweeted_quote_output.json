@@ -1,0 +1,92 @@
+{
+  "event_id": "1254545182122340353",
+  "tweet_id": 1254545182122340353,
+  "tweet_id_str": "1254545182122340353",
+  "tweet_text": "Chinese propaganda outlets were using Trevor Noah videos last week, today it's Bill Gates https://t.co/nvcPZUABsy",
+  "tweet_hashtags": [],
+  "tweet_is_quote": true,
+  "tweet_is_retweet": true,
+  "tweet_lang": "en",
+  "tweet_likes": 0,
+  "tweet_mentions": [
+    {
+      "screen_name": "JackPosobiec",
+      "name": "Jack Posobiec, IWO",
+      "id": 592730371,
+      "id_str": "592730371",
+      "indices": [
+        3,
+        16
+      ]
+    }
+  ],
+  "tweet_retweets": 0,
+  "tweet_source": "<a href=\"https://mobile.twitter.com\" rel=\"nofollow\">Twitter Web App</a>",
+  "tweet_streaming": true,
+  "tweet_timestamp": "Sun Apr 26 22:57:34 +0000 2020",
+  "tweet_urls": [
+    {
+      "url": "https://t.co/nvcPZUABsy",
+      "expanded_url": "https://twitter.com/chenweihua/status/1254421982562697217",
+      "display_url": "twitter.com/chenweihua/sta\u2026",
+      "indices": [
+        108,
+        131
+      ]
+    }
+  ],
+  "tweet_user_id": 841885784068222976,
+  "tweet_user_name": "JulieHouseOfWow",
+  "tweet_user_creation_timestamp": "Wed Mar 15 05:36:27 +0000 2017",
+  "tweet_user_description": null,
+  "tweet_user_followers": 1302,
+  "tweet_user_following": 5001,
+  "tweet_user_location": null,
+  "tweet_user_tweets": 11317,
+  "tweet_user_verified": false,
+  "tweet_retweeted_id": 1254481828699934721,
+  "tweet_retweeted_id_str": "1254481828699934721",
+  "tweet_retweeted_text": "Chinese propaganda outlets were using Trevor Noah videos last week, today it's Bill Gates https://t.co/nvcPZUABsy",
+  "tweet_retweeted_hashtags": [],
+  "tweet_retweeted_likes": 4355,
+  "tweet_retweeted_mentions": [],
+  "tweet_retweeted_retweets": 2060,
+  "tweet_retweeted_urls": [
+    {
+      "url": "https://t.co/nvcPZUABsy",
+      "expanded_url": "https://twitter.com/chenweihua/status/1254421982562697217",
+      "display_url": "twitter.com/chenweihua/sta\u2026",
+      "indices": [
+        90,
+        113
+      ]
+    }
+  ],
+  "tweet_retweeted_user_id": 592730371,
+  "tweet_retweeted_user_name": "JackPosobiec",
+  "tweet_quoted_id": 1254421982562697217,
+  "tweet_quoted_id_str": "1254421982562697217",
+  "tweet_quoted_text": "Bill Gates blasts Trump\u2019s blame game on China as a distraction. https://t.co/fjjcXRGtvq",
+  "tweet_quoted_hashtags": [],
+  "tweet_quoted_likes": 916,
+  "tweet_quoted_mentions": [],
+  "tweet_quoted_retweets": 375,
+  "tweet_quoted_urls": [],
+  "tweet_quoted_user_id": 88702710,
+  "tweet_quoted_user_name": "chenweihua",
+  "tweet_hashtags_list": "",
+  "tweet_mentions_list": "JackPosobiec",
+  "tweet_urls_list": "https://twitter.com/chenweihua/status/1254421982562697217",
+  "tweet_retweeted_hashtags_list": "",
+  "tweet_retweeted_mentions_list": "",
+  "tweet_retweeted_urls_list": "https://twitter.com/chenweihua/status/1254421982562697217",
+  "tweet_quoted_hashtags_list": "",
+  "tweet_quoted_mentions_list": "",
+  "tweet_quoted_urls_list": "",
+  "tweet_hashtags_list_all": "",
+  "tweet_mentions_list_all": "JackPosobiec, ",
+  "tweet_urls_list_all": "https://twitter.com/chenweihua/status/1254421982562697217, https://twitter.com/chenweihua/status/1254421982562697217, ",
+  "tweet_sentiment_polarity": -0.03333333333333333,
+  "tweet_sentiment_subjectivity": 0.05555555555555556,
+  "tweet_sentiment_label": "negative"
+}

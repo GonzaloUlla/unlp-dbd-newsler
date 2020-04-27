@@ -5,18 +5,23 @@ import json
 
 import tweepy
 
+from .generators import StreamingTweetGenerator
 from .sentiments import TweetAnalyzer
-from .utils import create_api, get_logger, get_filename, extract_tweet
+from .utils import create_api, get_filename, get_logger
 
 logger = get_logger()
 
 
 def process_tweet(tweet):
     analyzer = TweetAnalyzer()
-    tweet_dict = extract_tweet(tweet)
-    sentiments = analyzer.get_sentiment(tweet_dict["tweet_text"])
-    tweet_dict.update(sentiments)
-    return tweet_dict
+
+    streaming_tweet = StreamingTweetGenerator(tweet._json).generate()
+    sentiments = analyzer.get_sentiment(streaming_tweet["tweet_text"])
+    streaming_tweet.update(sentiments)
+
+    logger.debug("Processed Tweet JSON to export: [{}]".format(json.dumps(streaming_tweet)))
+
+    return streaming_tweet
 
 
 def export_tweet(tweet):
