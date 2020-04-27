@@ -1,0 +1,91 @@
+{
+  "event_id": "1254569877827878913",
+  "tweet_id": 1254569877827879000,
+  "tweet_id_str": "1254569877827878913",
+  "tweet_text": "\"The Nazis migrated to America to vaccinate your children because they couldn't use gas chambers.\"\n\nWut?\n\nhttps://t.co/uieg0MrP7f https://t.co/3tx2V0Usua https://t.co/PGPp5qizeH",
+  "tweet_hashtags": [],
+  "tweet_is_quote": true,
+  "tweet_is_retweet": true,
+  "tweet_lang": "en",
+  "tweet_likes": 0,
+  "tweet_mentions": [
+    {
+      "screen_name": "JackFell13",
+      "name": "Jack Fell",
+      "id": 2688592627,
+      "id_str": "2688592627",
+      "indices": [
+        3,
+        14
+      ]
+    }
+  ],
+  "tweet_retweets": 5,
+  "tweet_source": "<a href=\"https://mobile.twitter.com\" rel=\"nofollow\">Twitter Web App</a>",
+  "tweet_streaming": false,
+  "tweet_timestamp": "Mon Apr 27 00:35:42 +0000 2020",
+  "tweet_urls": [],
+  "tweet_user_id": 1210032478225916000,
+  "tweet_user_name": "BotCordial",
+  "tweet_user_creation_timestamp": "Thu Dec 26 03:00:17 +0000 2019",
+  "tweet_user_description": "Stay cozy.",
+  "tweet_user_followers": 475,
+  "tweet_user_following": 702,
+  "tweet_user_location": "",
+  "tweet_user_tweets": 3559,
+  "tweet_user_verified": false,
+  "tweet_retweeted_id": 1254565356603166700,
+  "tweet_retweeted_id_str": "1254565356603166726",
+  "tweet_retweeted_text": "\"The Nazis migrated to America to vaccinate your children because they couldn't use gas chambers.\"\n\nWut?\n\nhttps://t.co/uieg0MrP7f https://t.co/3tx2V0Usua https://t.co/PGPp5qizeH",
+  "tweet_retweeted_hashtags": [],
+  "tweet_retweeted_likes": 21,
+  "tweet_retweeted_mentions": [],
+  "tweet_retweeted_retweets": 5,
+  "tweet_retweeted_urls": [
+    {
+      "url": "https://t.co/uieg0MrP7f",
+      "expanded_url": "https://www.cnn.com/2019/06/10/health/ny-measles-response/index.html",
+      "display_url": "cnn.com/2019/06/10/hea…",
+      "indices": [
+        106,
+        129
+      ]
+    },
+    {
+      "url": "https://t.co/3tx2V0Usua",
+      "expanded_url": "https://twitter.com/Education4Libs/status/1254553348155543552",
+      "display_url": "twitter.com/Education4Libs…",
+      "indices": [
+        130,
+        153
+      ]
+    }
+  ],
+  "tweet_retweeted_user_id": 2688592627,
+  "tweet_retweeted_user_name": "JackFell13",
+  "tweet_quoted_id": 1254553348155543600,
+  "tweet_quoted_id_str": "1254553348155543552",
+  "tweet_quoted_text": "The Nazis never went away.\n\nThey migrated to America.\n\nBut they’re no longer using gas chambers.\n\nThey’re using vaccines to do the job slowly & quietly instead.\n\nWake up & research.",
+  "tweet_quoted_hashtags": [],
+  "tweet_quoted_likes": 5458,
+  "tweet_quoted_mentions": [],
+  "tweet_quoted_retweets": 2318,
+  "tweet_quoted_urls": [],
+  "tweet_quoted_user_id": 817661098988019700,
+  "tweet_quoted_user_name": "Education4Libs",
+  "tweet_hashtags_list": "",
+  "tweet_mentions_list": "JackFell13",
+  "tweet_urls_list": "",
+  "tweet_retweeted_hashtags_list": "",
+  "tweet_retweeted_mentions_list": "",
+  "tweet_retweeted_urls_list": "https://www.cnn.com/2019/06/10/health/ny-measles-response/index.html, https://twitter.com/Education4Libs/status/1254553348155543552",
+  "tweet_quoted_hashtags_list": "",
+  "tweet_quoted_mentions_list": "",
+  "tweet_quoted_urls_list": "",
+  "tweet_hashtags_list_all": "",
+  "tweet_mentions_list_all": "JackFell13, ",
+  "tweet_urls_list_all": "https://www.cnn.com/2019/06/10/health/ny-measles-response/index.html, https://twitter.com/Education4Libs/status/1254553348155543552, ",
+  "tweet_sentiment_polarity": 0,
+  "tweet_sentiment_subjectivity": 0,
+  "tweet_sentiment_label": "neutral"
+}

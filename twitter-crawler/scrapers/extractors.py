@@ -81,7 +81,7 @@ class EntitiesExtractor(Extractor):
 
     def extract(self, attr, default=None):
         if self.entities is not None:
-            return ', '.join(entity[attr] for entity in self.entities)
+            return ", ".join(entity[attr] for entity in self.entities)
         else:
             return default
 
