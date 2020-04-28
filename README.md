@@ -15,8 +15,9 @@ Diseño de Bases de Datos (DBD) - MS in Software Engineering 2019/2020 - UNLP
     - [Running everything with Docker](#running-everything-with-docker)
     - [Running only news-crawler](#running-only-news-crawler)
     - [Running only twitter-crawler](#running-only-twitter-crawler)
-  - [Kibana Dashboard](#kibana-dashboard)
+  - [Kibana](#kibana)
     - [Import Dashboard to Kibana](#import-dashboard-to-kibana)
+    - [Import Canvas to Kibana](#import-canvas-to-kibana)
   - [Conventions](#conventions)
     - [Style Guide](#style-guide)
     - [Branching Model](#branching-model)
@@ -98,7 +99,7 @@ cd twitter-crawler
 python3.8 -m scrapers.streaming scrapers/streaming.py
 ```
 
-## Kibana Dashboard
+## Kibana
 
 ### Import Dashboard to Kibana
 
@@ -106,7 +107,14 @@ python3.8 -m scrapers.streaming scrapers/streaming.py
 - Select option "Management"
 - Select option "Saved objects"
 - Select option "Import"
-- Select file .json
+- Select file kibana-dashboard.ndjson
+
+### Import Canvas to Kibana
+
+- Open Kibana
+- Select option "Canvas"
+- Select option "Import workpad JSON file"
+- Select file kibana-canvas.json
 
 ## Conventions
 
