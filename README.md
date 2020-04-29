@@ -94,7 +94,13 @@ docker-compose up -d --build
 
   - Go to `http://localhost:5601/`
   - Select: `Management` --> `Saved objects` --> `Import`
-  - Select JSON file: `/path/to/unlp-dbd-newsler/elk/kibana-dashboard-v1.ndjson`
+  - Select NDJSON file: `/path/to/unlp-dbd-newsler/elk/kibana-dashboard-v1.ndjson`
+
+- Import Canvas to Kibana
+
+  - Go to `http://localhost:5601/`
+  - Select: `Canvas` --> `Import workpad JSON file`
+  - Select JSON file: `/path/to/unlp-dbd-newsler/elk/kibana-canvas-v1.json`
 
 ### Run without Docker: news-crawler
 
