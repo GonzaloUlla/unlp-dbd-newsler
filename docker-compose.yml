@@ -117,6 +117,42 @@ services:
       timeout: 5s
       retries: 5
 
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    environment:
+      - MONGO_INITDB_DATABASE=Newsler
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=rootpassword
+    volumes:
+      - type: volume
+        source: mongodb-data
+        target: /data/db
+    ports:
+      - 27017:27017
+    networks:
+      - elk
+    healthcheck:
+      start_period: 30s
+      test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/Newsler --quiet
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    entrypoint: /usr/local/bin/mongo-express-entrypoint.sh
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: rootpassword
+    volumes:
+      - ./elk/mongo-express-entrypoint.sh:/usr/local/bin/mongo-express-entrypoint.sh
+    ports:
+      - 8081:8081
+    networks:
+      - elk
+
   news-crawler:
     build:
       context: news-crawler
@@ -181,6 +217,8 @@ volumes:
   connector-data:
     driver: local
   connector-logs:
+    driver: local
+  mongodb-data:
     driver: local
 
 networks:
