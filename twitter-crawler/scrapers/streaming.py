@@ -2,14 +2,19 @@
 Twitter Scraper to stream tweets in real time according to specific keywords.
 """
 import json
-
 import tweepy
+import time
+import traceback
 
 from .generators import StreamingTweetGenerator
 from .sentiments import TweetAnalyzer
 from .utils import create_api, get_filename, get_logger
+from kafka import KafkaProducer
+from json import dumps
+from json import loads
 
 logger = get_logger()
+topic = 'newsler-twitter-crawler'
 
 
 def process_tweet(tweet):
@@ -31,6 +36,18 @@ def export_tweet(tweet):
     logger.debug('Tweet exported to: {}'.format(filename))
 
 
+def produce_tweet(tweet):
+    try:
+        producer = KafkaProducer(bootstrap_servers=['kafka:9095'],
+                                 value_serializer=lambda x:
+                                 dumps(x).encode('utf-8'))
+        logger.info("Producing streaming tweet {}".format(str(tweet)))
+        producer.send(topic, value=tweet)
+    except Exception as e:
+        logger.error("Error producing streaming tweet {}".format(str(tweet)))
+        logger.error(traceback.format_exc())
+
+
 class NewsStreamListener(tweepy.StreamListener):
 
     def __init__(self, api):
@@ -40,7 +57,8 @@ class NewsStreamListener(tweepy.StreamListener):
 
     def on_status(self, tweet):
         logger.info("New tweet streamed with text: [{}]".format(tweet.text[:50] + "..."))
-        export_tweet(tweet)
+        #export_tweet(tweet)
+        produce_tweet(process_tweet(tweet))
 
     def on_error(self, status):
         logger.error("Error detected")

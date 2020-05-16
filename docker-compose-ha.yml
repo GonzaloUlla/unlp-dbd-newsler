@@ -125,6 +125,80 @@ services:
       timeout: 3s
       retries: 5
 
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+      - elk
+    volumes:
+      - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh
+    healthcheck:
+      start_period: 30s
+      test: ["CMD", "curl", "-f", "http://localhost:2181"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka
+    ports:
+      - "9095:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ADVERTISED_PORT: 9095
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_KAFKA://kafka:9095
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_KAFKA:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_KAFKA
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LOG_DIRS: /kafka/logs
+      KAFKA_BROKER_ID: 1
+      KAFKA_CREATE_TOPICS: "newsler-news-crawler:1:2, newsler-twitter-crawler:1:2"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+    networks:
+      - elk
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./kafka/data/01:/kafka
+      - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh
+    healthcheck:
+      start_period: 30s
+      test: ["CMD", "curl", "-f", "http://localhost:9095"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+  kafka02:
+    image: wurstmeister/kafka
+    container_name: kafka02
+    ports:
+      - "9096:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka02
+      KAFKA_ADVERTISED_PORT: 9096
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_KAFKA://kafka:9096
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_KAFKA:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_KAFKA
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LOG_DIRS: /kafka/logs
+      KAFKA_BROKER_ID: 2
+      KAFKA_CREATE_TOPICS: "newsler-news-crawler:1:2, newsler-twitter-crawler:1:2"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+    networks:
+      - elk
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./kafka/data/02:/kafka
+      - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh
+    healthcheck:
+      start_period: 30s
+      test: ["CMD", "curl", "-f", "http://localhost:9096"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
   cerebro:
     image: lmenezes/cerebro:0.8.5
     container_name: cerebro
@@ -165,6 +239,22 @@ services:
     networks:
       - elk
 
+  connector:
+    build:
+      context: connector
+    image: connector
+    container_name: connector
+    volumes:
+      - type: volume
+        source: connector-data
+        target: /usr/src/app/data
+      - type: volume
+        source: connector-logs
+        target: /usr/src/app/logs
+      - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh
+    networks:
+      - elk
+
 volumes:
   data01:
     driver: local
@@ -179,6 +269,10 @@ volumes:
   twitter-data:
     driver: local
   twitter-logs:
+    driver: local
+  connector-data:
+    driver: local
+  connector-logs:
     driver: local
 
 networks:

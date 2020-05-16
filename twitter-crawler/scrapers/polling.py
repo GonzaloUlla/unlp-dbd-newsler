@@ -3,15 +3,18 @@ Twitter Scraper to poll last tweets periodically according to a specific query.
 """
 import time
 import json
-
 import jsonlines
 import tweepy
+import traceback
 
 from .generators import PollingTweetGenerator
 from .sentiments import TweetAnalyzer
 from .utils import create_api, get_logger, get_filename
+from kafka import KafkaProducer
+from json import dumps
 
 logger = get_logger()
+topic = 'newsler-twitter-crawler'
 
 
 def process_tweet(tweet):
@@ -39,7 +42,9 @@ def scrap_tweets(api, query, tweets_count):
     tweets_num = 0
 
     for tweet in cursor_list:
-        tweets_list.append(process_tweet(tweet))
+        processed_tweet = process_tweet(tweet)
+        tweets_list.append(processed_tweet)
+        produce_tweet(processed_tweet)
         tweets_num += + 1
 
     elapsed_time = round(time.time() - start_time, 2)
@@ -59,6 +64,18 @@ def export_tweets(tweets):
     logger.info('{} polled tweets exported to: {} in {} seconds'.format(len(tweets), filename, elapsed_time))
 
 
+def produce_tweet(tweet):
+    try:
+        producer = KafkaProducer(bootstrap_servers=['kafka:9095'],
+                                 value_serializer=lambda x:
+                                 dumps(x).encode('utf-8'))
+        logger.info("Producing polling tweet {}".format(str(tweet)))
+        producer.send(topic, value=tweet)
+    except Exception as e:
+        logger.error("Error producing polling tweet {}".format(str(tweet)))
+        logger.error(traceback.format_exc())
+
+
 def main(search_query):
     """Polls Twitter API to scrap and export latest 100 tweets matching a search query."""
 
@@ -74,7 +91,7 @@ def main(search_query):
         tweets_list = []
         for i in range(0, rounds_number):
             tweets_list.extend(scrap_tweets(api, search_query, tweets_number))
-        export_tweets(tweets_list)
+        #export_tweets(tweets_list)
 
 
 if __name__ == "__main__":

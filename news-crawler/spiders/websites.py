@@ -5,6 +5,7 @@ import json
 import logging
 import os
 import time
+import traceback
 from datetime import datetime
 from hashlib import sha256
 
@@ -12,11 +13,13 @@ from scrapy.crawler import CrawlerRunner
 from scrapy.spiders import Spider
 from multiprocessing import Process, Queue
 from twisted.internet import reactor
+from kafka import KafkaProducer
+from json import dumps
 
 formatter = '%(levelname)s [%(asctime)s] %(filename)s: %(message)s'
 logging.basicConfig(level=logging.INFO, format=formatter)
 logger = logging.getLogger()
-
+topic = 'newsler-news-crawler'
 
 def get_filename():
     to_json_timestamp = datetime.now().strftime('%Y%m%d_%H%M')
@@ -50,7 +53,8 @@ class XPathSpider(Spider):
                     'news_text': self._get_news_text(title)
                 }
                 self._add_event_id()
-                self._export_news()
+                #self._export_news()
+                self._produce_news()
                 yield self.news
 
     def _set_absolute_url(self, title):
@@ -76,6 +80,17 @@ class XPathSpider(Spider):
         filename = get_filename()
         with open(filename, 'a+') as file:
             file.write(json.dumps(self.news) + '\n')
+
+    def _produce_news(self):
+        try:
+            producer = KafkaProducer(bootstrap_servers=['kafka:9095'],
+                                     value_serializer=lambda x:
+                                     dumps(x).encode('utf-8'))
+            producer.send(topic, value=self.news)
+        except Exception as e:
+            logger.error("Error producing News {}".format(self.news))
+            logger.error(traceback.format_exc())
+
 
 
 class AlJazeeraSpider(XPathSpider):
