@@ -4,9 +4,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends logrotate cron supervisor && \
     apt-get clean && \
     mkdir -p /usr/src/app && \
-    mkdir -p /usr/src/app/logs && \
-    mkdir -p /usr/src/app/data && \
-    mkdir -p /usr/src/app/data/archive
+    mkdir -p /usr/src/app/logs
 
 WORKDIR /usr/src/app
 

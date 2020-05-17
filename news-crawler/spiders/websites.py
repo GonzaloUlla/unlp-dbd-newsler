@@ -21,12 +21,6 @@ logging.basicConfig(level=logging.INFO, format=formatter)
 logger = logging.getLogger()
 topic = 'newsler-news-crawler'
 
-def get_filename():
-    to_json_timestamp = datetime.now().strftime('%Y%m%d_%H%M')
-    path = os.getcwd()
-    return path + '/data/websites_' + to_json_timestamp + '.json'
-
-
 class XPathSpider(Spider):
     """Implements super().parse() as a template method. All mews-crawler
     spiders that use XPath must inherit from this class."""
@@ -53,7 +47,6 @@ class XPathSpider(Spider):
                     'news_text': self._get_news_text(title)
                 }
                 self._add_event_id()
-                #self._export_news()
                 self._produce_news()
                 yield self.news
 
@@ -75,11 +68,6 @@ class XPathSpider(Spider):
     def _add_event_id(self):
         event_id = sha256(json.dumps(self.news, sort_keys=True).encode('utf8')).hexdigest()
         self.news['event_id'] = event_id
-
-    def _export_news(self):
-        filename = get_filename()
-        with open(filename, 'a+') as file:
-            file.write(json.dumps(self.news) + '\n')
 
     def _produce_news(self):
         try:

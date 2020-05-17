@@ -7,9 +7,7 @@ RUN apt-get update && \
     dpkg -i filebeat-7.6.2-amd64.deb && \
     rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     mkdir -p /usr/src/app && \
-    mkdir -p /usr/src/app/logs && \
-    mkdir -p /usr/src/app/data && \
-    mkdir -p /usr/src/app/data/archive
+    mkdir -p /usr/src/app/logs
 
 WORKDIR /usr/src/app
 

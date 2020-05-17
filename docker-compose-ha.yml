@@ -199,6 +199,42 @@ services:
       timeout: 3s
       retries: 5
 
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    environment:
+      - MONGO_INITDB_DATABASE=Newsler
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=rootpassword
+    volumes:
+      - type: volume
+        source: mongodb-data
+        target: /data/db
+    ports:
+      - 27017:27017
+    networks:
+      - elk
+    healthcheck:
+      start_period: 30s
+      test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/Newsler --quiet
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    entrypoint: /usr/local/bin/mongo-express-entrypoint.sh
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: rootpassword
+    volumes:
+      - ./elk/mongo-express-entrypoint.sh:/usr/local/bin/mongo-express-entrypoint.sh
+    ports:
+      - 8081:8081
+    networks:
+      - elk
+
   cerebro:
     image: lmenezes/cerebro:0.8.5
     container_name: cerebro
@@ -214,9 +250,6 @@ services:
     container_name: news-crawler
     volumes:
       - type: volume
-        source: news-data
-        target: /usr/src/app/data
-      - type: volume
         source: news-logs
         target: /usr/src/app/logs
     networks:
@@ -231,9 +264,6 @@ services:
       - twitter-crawler/.env
     volumes:
       - type: volume
-        source: twitter-data
-        target: /usr/src/app/data
-      - type: volume
         source: twitter-logs
         target: /usr/src/app/logs
     networks:
@@ -245,9 +275,6 @@ services:
     image: connector
     container_name: connector
     volumes:
-      - type: volume
-        source: connector-data
-        target: /usr/src/app/data
       - type: volume
         source: connector-logs
         target: /usr/src/app/logs
@@ -262,17 +289,13 @@ volumes:
     driver: local
   data03:
     driver: local
-  news-data:
-    driver: local
   news-logs:
-    driver: local
-  twitter-data:
     driver: local
   twitter-logs:
     driver: local
-  connector-data:
-    driver: local
   connector-logs:
+    driver: local
+  mongodb-data:
     driver: local
 
 networks:

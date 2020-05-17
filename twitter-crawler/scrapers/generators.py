@@ -304,7 +304,7 @@ class StreamingTweetGenerator(Generator):
         is_retweeted = streaming_tweet['tweet_is_retweet']
         if is_quoted:
             streaming_tweet.update(self.quoted.generate())
-        if is_retweeted['tweet_is_retweet'] == 'True':
+        if is_retweeted:
             streaming_tweet.update(self.retweeted.generate())
         streaming_tweet.update(TweetListsGenerator(streaming_tweet, is_quoted, is_retweeted).generate())
         streaming_tweet.update(TweetAllListsGenerator(streaming_tweet, is_quoted, is_retweeted).generate())

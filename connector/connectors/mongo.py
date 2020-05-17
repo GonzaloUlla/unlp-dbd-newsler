@@ -8,6 +8,7 @@ import traceback
 
 from kafka import KafkaConsumer
 from pymongo import MongoClient
+from pymongo.errors import DuplicateKeyError
 from json import loads
 from datetime import datetime
 from threading import Thread
@@ -37,6 +38,8 @@ class KafkaConsumerMongoDBPublisher():
                 message.value['_id'] = message.value['event_id']
                 doc_id = collection.insert_one(message.value).inserted_id
                 logger.info("Inserted record in MongoDB {}".format(doc_id))
+            except DuplicateKeyError as dke:
+                logger.error("Error inserting record in MongoDB, record exists {}".format(str(message.value['event_id'])))
             except Exception as e:
                 logger.error("Error Consuming message and publishing to MongoDB {}".format(str(message.value)))
                 print(traceback.format_exc())

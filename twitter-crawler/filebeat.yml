@@ -3,13 +3,6 @@ filebeat.inputs:
 - type: log
   enabled: true
   paths:
-    - /usr/src/app/data/*.json
-  fields:
-    file_type: json
-
-- type: log
-  enabled: true
-  paths:
     - /usr/src/app/logs/*.log
   fields:
     file_type: log
