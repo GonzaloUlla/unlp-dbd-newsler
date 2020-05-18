@@ -14,7 +14,9 @@
         "match_mapping_type" : "string",
         "mapping" : {
           "type" : "text",
-          "norms" : false
+          "norms" : false,
+	  "analyzer" : "stop",
+	  "fielddata" : true
         }
       }
     }, {
@@ -23,6 +25,8 @@
         "match_mapping_type" : "string",
         "mapping" : {
           "type" : "text", "norms" : false,
+	  "analyzer" : "stop",
+	  "fielddata" : true,	
           "fields" : {
             "keyword" : { "type": "keyword", "ignore_above": 256 }
           }
