@@ -52,31 +52,6 @@ services:
       timeout: 3s
       retries: 5
 
-  logstash:
-    image: docker.elastic.co/logstash/logstash:7.6.2
-    container_name: logstash
-    entrypoint: /usr/share/logstash/logstash-entrypoint.sh
-    depends_on:
-      - elasticsearch
-    environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
-    volumes:
-      - ./elk/logstash.yml:/usr/share/logstash/config/logstash.yml
-      - ./elk/elasticsearch-template.json:/usr/share/logstash/config/elasticsearch-template.json
-      - ./elk/pipeline:/usr/share/logstash/pipeline:ro
-      - ./elk/logstash-entrypoint.sh:/usr/share/logstash/logstash-entrypoint.sh
-      - ./wait-for-it.sh:/usr/share/logstash/wait-for-it.sh
-    ports:
-      - 9600:9600
-    networks:
-      - elk
-    healthcheck:
-      start_period: 30s
-      test: ["CMD", "curl", "-f", "http://localhost:9600"]
-      interval: 15s
-      timeout: 3s
-      retries: 5
-
   zookeeper:
     image: wurstmeister/zookeeper:latest
     container_name: zookeeper

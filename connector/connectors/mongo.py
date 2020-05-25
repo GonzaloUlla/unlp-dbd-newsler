@@ -13,14 +13,15 @@ from kafka import KafkaConsumer
 from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError
 
+logging_level = os.getenv("LOGGING_LEVEL", "INFO")
 formatter = '%(levelname)s [%(asctime)s] %(filename)s: %(message)s'
-logging.basicConfig(level=logging.INFO, format=formatter)
+logging.basicConfig(level=logging.getLevelName(logging_level), format=formatter)
 logger = logging.getLogger()
 
 logger.info("Initializing MongoDB connector")
 mongo = MongoClient(os.getenv("MONGO_HOST", "mongo"), int(os.getenv("MONGO_PORT", 27017)),
                     username=os.getenv("MONGO_USERNAME", "root"), password=os.getenv("MONGO_PASSWORD", "rootpassword"))
-database = mongo[os.getenv("MONGO_DATABASE", "Newsler")]
+database = mongo[os.getenv("MONGO_DATABASE", "newsler")]
 logger.info("MongoDB connector initialized: [{}]".format(repr(mongo)))
 
 

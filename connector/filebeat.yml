@@ -1,0 +1,16 @@
+filebeat.inputs:
+
+- type: log
+  enabled: true
+  paths:
+    - /usr/src/app/logs/*.log
+  fields:
+    file_type: log
+  multiline.pattern: ^(DEBUG|INFO|WARN|ERROR|2020)
+  multiline.negate: true
+  multiline.match: after
+
+output.logstash:
+  enabled: true
+  hosts: ["logstash:5044"]
+  index: 'connector'

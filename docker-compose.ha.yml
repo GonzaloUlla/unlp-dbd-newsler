@@ -108,12 +108,15 @@ services:
   logstash:
     image: docker.elastic.co/logstash/logstash:7.6.2
     container_name: logstash
+    entrypoint: /usr/share/logstash/logstash-entrypoint-ha.sh
     environment:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
     volumes:
       - ./elk/logstash-ha.yml:/usr/share/logstash/config/logstash.yml
       - ./elk/elasticsearch-template-ha.json:/usr/share/logstash/config/elasticsearch-template-ha.json
       - ./elk/pipeline-ha:/usr/share/logstash/pipeline:ro
+      - ./elk/logstash-entrypoint-ha.sh:/usr/share/logstash/logstash-entrypoint-ha.sh
+      - ./wait-for-it.sh:/usr/share/logstash/wait-for-it.sh
     ports:
       - 9600:9600
     networks:
@@ -147,53 +150,22 @@ services:
     environment:
       KAFKA_ADVERTISED_HOST_NAME: kafka
       KAFKA_ADVERTISED_PORT: 9095
+      KAFKA_LISTENERS: LISTENER_KAFKA://kafka:9095
       KAFKA_ADVERTISED_LISTENERS: LISTENER_KAFKA://kafka:9095
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_KAFKA:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_KAFKA
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LOG_DIRS: /kafka/logs
       KAFKA_BROKER_ID: 1
-      KAFKA_CREATE_TOPICS: "newsler-news-crawler:1:2, newsler-twitter-crawler:1:2"
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_CREATE_TOPICS: "newsler-news-crawler:1:1, newsler-twitter-crawler:1:1"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh
-      - ./kafka/data/1:/kafka
       - ./kafka/kafka-healthcheck.sh:/bin/kafka-healthcheck.sh
     ports:
       - "9095:9092"
-    networks:
-      - elk
-    healthcheck:
-      start_period: 30s
-      test: ["CMD-SHELL", "/bin/kafka-healthcheck.sh"]
-      interval: 30s
-      timeout: 20s
-      retries: 5
-
-  kafka02:
-    image: wurstmeister/kafka:2.12-2.5.0
-    container_name: kafka02
-    depends_on:
-      - zookeeper
-    environment:
-      KAFKA_ADVERTISED_HOST_NAME: kafka02
-      KAFKA_ADVERTISED_PORT: 9096
-      KAFKA_ADVERTISED_LISTENERS: LISTENER_KAFKA://kafka:9096
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_KAFKA:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_KAFKA
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LOG_DIRS: /kafka/logs
-      KAFKA_BROKER_ID: 2
-      KAFKA_CREATE_TOPICS: "newsler-news-crawler:1:2, newsler-twitter-crawler:1:2"
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh
-      - ./kafka/data/1:/kafka
-      - ./kafka/kafka-healthcheck.sh:/bin/kafka-healthcheck.sh
-    ports:
-      - "9096:9092"
     networks:
       - elk
     healthcheck:
@@ -212,7 +184,7 @@ services:
       NEWS_INTERVAL_SECS: 60
       KAFKA_ENDPOINT: kafka:9095
       KAFKA_NEWS_TOPIC: newsler-news-crawler
-      LOGGING_LEVEL: INFO
+      LOGGING_LEVEL: ${LOGGING_LEVEL:-INFO}
     volumes:
       - type: volume
         source: news-logs
@@ -237,6 +209,7 @@ services:
     environment:
       KAFKA_ENDPOINT: "kafka:9095"
       KAFKA_TWITTER_TOPIC: "newsler-twitter-crawler"
+      LOGGING_LEVEL: ${LOGGING_LEVEL:-INFO}
     volumes:
       - type: volume
         source: twitter-logs
@@ -256,6 +229,7 @@ services:
       context: connector
     image: connector
     container_name: connector
+    entrypoint: /usr/src/app/connector-entrypoint-ha.sh
     environment:
       CONSUMER_INTERVAL_SECS: 30
       ES_HOST: elasticsearch01
@@ -263,6 +237,7 @@ services:
       KAFKA_ENDPOINT: kafka:9095
       KAFKA_NEWS_TOPIC: newsler-news-crawler
       KAFKA_TWITTER_TOPIC: newsler-twitter-crawler
+      LOGGING_LEVEL: ${LOGGING_LEVEL:-INFO}
     volumes:
       - type: volume
         source: connector-logs

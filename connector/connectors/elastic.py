@@ -13,8 +13,9 @@ from threading import Thread
 from elasticsearch import Elasticsearch
 from kafka import KafkaConsumer
 
+logging_level = os.getenv("LOGGING_LEVEL", "INFO")
 formatter = '%(levelname)s [%(asctime)s] %(filename)s: %(message)s'
-logging.basicConfig(level=logging.INFO, format=formatter)
+logging.basicConfig(level=logging.getLevelName(logging_level), format=formatter)
 logger = logging.getLogger()
 
 logger.info("Initializing Elasticsearch connector")
@@ -24,18 +25,17 @@ logger.info("Elasticsearch connector initialized: [{}]".format(repr(es)))
 
 class KafkaConsumerElasticSearchPublisher(object):
 
-    def __init__(self, es_index_prefix=None, kafka_consumer=None, sleep_time=30, **kwargs):
-        self.es_index_prefix = es_index_prefix
+    def __init__(self, es_index=None, kafka_consumer=None, sleep_time=30, **kwargs):
+        self.es_index = es_index
         self.kafka_consumer = kafka_consumer
         self.sleep_time = sleep_time
 
     def consume_and_publish(self):
-        es_index = self.es_index_prefix + datetime.today().strftime('%Y%m')
         for message in self.kafka_consumer:
             try:
+                message.value['@timestamp'] = datetime.now().isoformat()
                 logger.info("Message consumed, publishing to Elasticsearch: [{}]".format(str(message.value)))
-                message.value['@timestamp'] = int(round(time.time() * 1000))
-                es.index(index=es_index, id=message.value['event_id'], body=message.value)
+                es.index(index=self.es_index, id=message.value['event_id'], body=message.value)
             except Exception as e:
                 logger.error("Error consuming message and publishing to Elasticsearch: [{}]".format(str(message.value)))
                 print(traceback.format_exc())
@@ -52,7 +52,7 @@ class NewsConsumerElasticSearchPublisher(KafkaConsumerElasticSearchPublisher):
         value_deserializer=lambda x: loads(x.decode('utf-8')))
 
     def __init__(self, sleep_time, **kwargs):
-        super().__init__(es_index_prefix="news-crawler-",
+        super().__init__(es_index="newsler-news-crawler",
                          kafka_consumer=self.consumer,
                          sleep_time=sleep_time,
                          **kwargs)
@@ -68,7 +68,7 @@ class TwitterConsumerElasticSearchPublisher(KafkaConsumerElasticSearchPublisher)
         value_deserializer=lambda x: loads(x.decode('utf-8')))
 
     def __init__(self, sleep_time=30, **kwargs):
-        super().__init__(es_index_prefix="twitter-crawler-",
+        super().__init__(es_index="newsler-twitter-crawler",
                          kafka_consumer=self.consumer,
                          sleep_time=sleep_time,
                          **kwargs)

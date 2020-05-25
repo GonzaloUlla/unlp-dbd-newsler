@@ -53,7 +53,6 @@ CONSUMER_KEY=<KEY-WITHOUT-QUOTES>
 CONSUMER_SECRET=<KEY-WITHOUT-QUOTES>
 ACCESS_TOKEN=<KEY-WITHOUT-QUOTES>
 ACCESS_TOKEN_SECRET=<KEY-WITHOUT-QUOTES>
-LOGGING_LEVEL=<[INFO]|DEBUG|WARN|ERROR>
 ```
 
 - If you are not using Docker, remember to export the previous keys
@@ -63,12 +62,18 @@ export CONSUMER_KEY=<KEY-WITHOUT-QUOTES>
 export CONSUMER_SECRET=<KEY-WITHOUT-QUOTES>
 export ACCESS_TOKEN=<KEY-WITHOUT-QUOTES>
 export ACCESS_TOKEN_SECRET=<KEY-WITHOUT-QUOTES>
+```
+
+- **Optional:** Set the services' logging level
+
+```bash
 export LOGGING_LEVEL=<[INFO]|DEBUG|WARN|ERROR>
 ```
+- **Optional:** Extra configuration options as `environment` keys in Compose YML files 
 
 ## Getting Started
 
-### Run with Docker
+### Run with Docker and Elasticsearch
 
 - Start the stack
 
@@ -78,6 +83,9 @@ export LOGGING_LEVEL=<[INFO]|DEBUG|WARN|ERROR>
 
 # Single-node Elasticsearch
 docker-compose up -d --build
+
+# Single-node Elasticsearch without shipping logs to ELK
+# docker-compose -f docker-compose.lite.yml up -d --build
 
 # Multi-node Elasticsearch
 # docker-compose -f docker-compose.ha.yml up -d --build
@@ -101,6 +109,31 @@ docker-compose up -d --build
   - Go to `http://localhost:5601/`
   - Select: `Canvas` --> `Import workpad JSON file`
   - Select JSON file: `/path/to/unlp-dbd-newsler/elk/kibana-canvas-v1.json`
+
+### Run with Docker and MongoDB
+
+- Start the stack
+
+```bash
+# If you are using a VM, run this with root:
+# sysctl -w vm.max_map_count=262144
+
+# Single-node MongoDB
+docker-compose -f docker-compose.mongo.yml up -d --build
+```
+
+- Wait until all services are healthy
+
+```bash
+watch -n1 docker-compose -f docker-compose.mongo.yml ps
+```
+
+- Explore data in MongoDB Express
+
+  - Go to `localhost:8081`
+  - Select database with name `newsler`
+  - Select collection with name `news-crawler`
+  - Select collection with name `twitter-crawler`
 
 ### Run without Docker: news-crawler
 

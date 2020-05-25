@@ -112,7 +112,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh
-      - ./kafka/data/1:/kafka
       - ./kafka/kafka-healthcheck.sh:/bin/kafka-healthcheck.sh
     ports:
       - "9095:9092"
@@ -129,7 +128,7 @@ services:
     image: mongo:4.2.6
     container_name: mongo
     environment:
-      - MONGO_INITDB_DATABASE=Newsler
+      - MONGO_INITDB_DATABASE=newsler
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=rootpassword
     volumes:
@@ -142,7 +141,7 @@ services:
       - elk
     healthcheck:
       start_period: 30s
-      test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/Newsler --quiet
+      test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/newsler --quiet
       interval: 15s
       timeout: 3s
       retries: 5
@@ -172,7 +171,7 @@ services:
       NEWS_INTERVAL_SECS: 60
       KAFKA_ENDPOINT: kafka:9095
       KAFKA_NEWS_TOPIC: newsler-news-crawler
-      LOGGING_LEVEL: INFO
+      LOGGING_LEVEL: ${LOGGING_LEVEL:-INFO}
     volumes:
       - type: volume
         source: news-logs
@@ -197,6 +196,7 @@ services:
     environment:
       KAFKA_ENDPOINT: "kafka:9095"
       KAFKA_TWITTER_TOPIC: "newsler-twitter-crawler"
+      LOGGING_LEVEL: ${LOGGING_LEVEL:-INFO}
     volumes:
       - type: volume
         source: twitter-logs
@@ -214,6 +214,7 @@ services:
   connector:
     build:
       context: connector
+      dockerfile: mongo.Dockerfile
     image: connector
     container_name: connector
     environment:
@@ -223,9 +224,10 @@ services:
       KAFKA_TWITTER_TOPIC: "newsler-twitter-crawler"
       MONGO_HOST: "mongo"
       MONGO_PORT: 27017
-      MONGO_DATABASE: "Newsler"
+      MONGO_DATABASE: "newsler"
       MONGO_USERNAME: "root"
       MONGO_PASSWORD: "rootpassword"
+      LOGGING_LEVEL: ${LOGGING_LEVEL:-INFO}
     volumes:
       - type: volume
         source: connector-logs
