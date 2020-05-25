@@ -83,24 +83,29 @@ docker-compose up -d --build
 # docker-compose -f docker-compose-ha.yml up -d --build
 ```
 
-- Create index patterns in Kibana
-
-  - Go to `http://localhost:5601/`
-  - Select: `Management` --> `Index Patterns` --> `Create index pattern`
-  - Create the **default** index pattern with name: `logstash-data-*` and timestamp: `@timestamp`
-  - Create another index pattern with name: `logstash-logs-*` and timestamp: `@timestamp`
-
-- Import Dashboard to Kibana
+- Import Dashboard and default Index Pattern to Kibana
 
   - Go to `http://localhost:5601/`
   - Select: `Management` --> `Saved objects` --> `Import`
-  - Select NDJSON file: `/path/to/unlp-dbd-newsler/elk/kibana-dashboard-v1.ndjson`
+  - Select NDJSON file: `/path/to/unlp-dbd-newsler/elk/kibana-dashboard.ndjson`
 
-- Import Canvas to Kibana
+- Set Index Patterns in Kibana
 
   - Go to `http://localhost:5601/`
-  - Select: `Canvas` --> `Import workpad JSON file`
-  - Select JSON file: `/path/to/unlp-dbd-newsler/elk/kibana-canvas-v1.json`
+  - Select: `Management` --> `Index Patterns`
+  - Select: `logstash-data-*` --> `Set as default index` --> `Refresh field list`
+  - Select:  `Management` --> `Index Patterns` --> `Create index pattern`
+    - Index pattern: `logstash-logs-*`, Time Filter field name: `@timestamp`
+
+- Explore Kibana Dashboard
+  - Select: `Dashboard`
+  - Select: `Dashboard_Newsler`
+
+- Discover data in real time
+  - Select: `Discover`
+  - Select index: `logstash-data-*` for news and tweets (check [Data Dictionary](#data-dictionary))
+  - Select index: `logstash-logs-*` for Newsler's logs
+
 
 ### Run without Docker: news-crawler
 
