@@ -12,7 +12,8 @@ Diseño de Bases de Datos (DBD) - MS in Software Engineering 2019/2020 - UNLP
     - [Dependencies](#dependencies)
     - [Configuration](#configuration)
   - [Getting Started](#getting-started)
-    - [Run with Docker](#run-with-docker)
+    - [Run with Docker and Elasticsearch](#run-with-docker-and-elasticsearch)
+    - [Run with Docker and MongoDB](#run-with-docker-and-mongodb)
     - [Run without Docker: news-crawler](#run-without-docker-news-crawler)
     - [Run without Docker: twitter-crawler](#run-without-docker-twitter-crawler)
   - [Data Dictionary](#data-dictionary)
@@ -69,7 +70,8 @@ export ACCESS_TOKEN_SECRET=<KEY-WITHOUT-QUOTES>
 ```bash
 export LOGGING_LEVEL=<[INFO]|DEBUG|WARN|ERROR>
 ```
-- **Optional:** Extra configuration options as `environment` keys in Compose YML files 
+
+- **Optional:** Extra configuration options as `environment` keys in Compose YML files
 
 ## Getting Started
 
@@ -101,7 +103,7 @@ docker-compose up -d --build
 
   - Go to `http://localhost:5601/`
   - Select: `Management` --> `Index Patterns`
-  - Select: `logstash-data-*` --> `Set as default index` --> `Refresh field list`
+  - Select: `newsler-*` --> `Set as default index` --> `Refresh field list`
   - Select:  `Management` --> `Index Patterns` --> `Create index pattern`
     - Index pattern: `logstash-logs-*`, Time Filter field name: `@timestamp`
 
@@ -111,9 +113,8 @@ docker-compose up -d --build
 
 - Discover data in real time
   - Select: `Discover`
-  - Select index: `logstash-data-*` for news and tweets (check [Data Dictionary](#data-dictionary))
+  - Select index: `newsler-*` for news and tweets (check [Data Dictionary](#data-dictionary))
   - Select index: `logstash-logs-*` for Newsler's logs
-
 
 ### Run with Docker and MongoDB
 
