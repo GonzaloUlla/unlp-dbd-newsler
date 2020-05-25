@@ -1,12 +1,15 @@
 import logging
 import os
 import traceback
-from datetime import datetime
+from json import dumps
 
 import tweepy
 from kafka import KafkaProducer
+
 from .sentiments import TweetAnalyzer
-from json import dumps
+
+kafka_servers = [os.getenv("KAFKA_ENDPOINT", "kafka:9095")]
+kafka_topic = os.getenv("KAFKA_TWITTER_TOPIC", "newsler-twitter-crawler")
 
 
 def get_logger():
@@ -42,14 +45,14 @@ def create_api():
 
 def produce_tweet(tweet=None, method=None):
     try:
-        producer = KafkaProducer(bootstrap_servers=['kafka:9095'],
+        producer = KafkaProducer(bootstrap_servers=kafka_servers,
                                  value_serializer=lambda x:
                                  dumps(x).encode('utf-8'))
         logger.info("Producing {crawler} tweet: {data}".format(crawler=method, data=str(tweet)))
-        producer.send(topic='newsler-twitter-crawler', value=tweet)
+        producer.send(topic=kafka_topic, value=tweet)
     except Exception as e:
-        logger.error("Error producing {crawler} tweet: {data} \n {exc}"
-        .format(crawler=method, data=str(tweet), exc=traceback.format_exc()))
+        logger.error("Error producing {crawler} tweet: [{data}] \n {exc}"
+                     .format(crawler=method, data=str(tweet), exc=traceback.format_exc()))
 
 
 def process_tweet(generated_tweet=None):

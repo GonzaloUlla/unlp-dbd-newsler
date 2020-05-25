@@ -14,7 +14,7 @@ RUN python3 -m pip install -r requirements.txt
 
 ADD . /usr/src/app/
 
-RUN cat supervisor.conf >> /etc/supervisor/supervisord.conf && \
+RUN cat supervisor-mongo.conf >> /etc/supervisor/supervisord.conf && \
     chmod 644 logrotate && \
     chown root:root logrotate && \
     cp logrotate /etc/logrotate.d/ && \
@@ -23,4 +23,4 @@ RUN cat supervisor.conf >> /etc/supervisor/supervisord.conf && \
 RUN rm /etc/localtime && \
     ln -s /usr/share/zoneinfo/America/Argentina/Cordoba /etc/localtime
 
-ENTRYPOINT ["./connector-entrypoint.sh"]
+ENTRYPOINT ["./connector-entrypoint-mongo.sh"]

@@ -1,13 +1,10 @@
 """
 Twitter Scraper to stream tweets in real time according to specific keywords.
 """
-import json
 import tweepy
-import time
 
 from .generators import StreamingTweetGenerator
 from .utils import create_api, get_logger, produce_tweet, process_tweet
-from json import loads
 
 logger = get_logger()
 

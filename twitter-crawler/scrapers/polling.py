@@ -2,8 +2,7 @@
 Twitter Scraper to poll last tweets periodically according to a specific query.
 """
 import time
-import json
-import jsonlines
+
 import tweepy
 
 from .generators import PollingTweetGenerator

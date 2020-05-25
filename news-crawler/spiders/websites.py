@@ -6,20 +6,23 @@ import logging
 import os
 import time
 import traceback
-from datetime import datetime
 from hashlib import sha256
+from json import dumps
+from multiprocessing import Process, Queue
 
+from kafka import KafkaProducer
 from scrapy.crawler import CrawlerRunner
 from scrapy.spiders import Spider
-from multiprocessing import Process, Queue
 from twisted.internet import reactor
-from kafka import KafkaProducer
-from json import dumps
 
+logging_level = os.getenv("LOGGING_LEVEL", "INFO")
 formatter = '%(levelname)s [%(asctime)s] %(filename)s: %(message)s'
-logging.basicConfig(level=logging.INFO, format=formatter)
+logging.basicConfig(level=logging.getLevelName(logging_level), format=formatter)
 logger = logging.getLogger()
-topic = 'newsler-news-crawler'
+
+kafka_servers = [os.getenv("KAFKA_ENDPOINT", "kafka:9095")]
+kafka_topic = os.getenv("KAFKA_NEWS_TOPIC", "newsler-news-crawler")
+
 
 class XPathSpider(Spider):
     """Implements super().parse() as a template method. All mews-crawler
@@ -71,14 +74,13 @@ class XPathSpider(Spider):
 
     def _produce_news(self):
         try:
-            producer = KafkaProducer(bootstrap_servers=['kafka:9095'],
+            producer = KafkaProducer(bootstrap_servers=kafka_servers,
                                      value_serializer=lambda x:
-                                     dumps(x).encode('utf-8'))
-            producer.send(topic, value=self.news)
+                                     dumps(x).encode("utf-8"))
+            producer.send(kafka_topic, value=self.news)
         except Exception as e:
-            logger.error("Error producing News {}".format(self.news))
+            logger.error("Error producing News: [{}]".format(self.news))
             logger.error(traceback.format_exc())
-
 
 
 class AlJazeeraSpider(XPathSpider):
@@ -206,4 +208,4 @@ def main(sleep_time):
 
 
 if __name__ == "__main__":
-    main(60)
+    main(int(os.getenv("NEWS_INTERVAL_SECS", 60)))

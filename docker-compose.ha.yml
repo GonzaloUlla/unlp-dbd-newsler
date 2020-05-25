@@ -126,26 +126,24 @@ services:
       retries: 5
 
   zookeeper:
-    image: wurstmeister/zookeeper
+    image: wurstmeister/zookeeper:latest
     container_name: zookeeper
     ports:
       - "2181:2181"
     networks:
       - elk
-    volumes:
-      - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh
     healthcheck:
       start_period: 30s
-      test: ["CMD", "curl", "-f", "http://localhost:2181"]
+      test: ['CMD', '/bin/bash', '-c', 'echo "ruok" | nc -w 2 -q 2 localhost 2181 | grep imok']
       interval: 15s
       timeout: 3s
       retries: 5
 
   kafka:
-    image: wurstmeister/kafka
+    image: wurstmeister/kafka:2.12-2.5.0
     container_name: kafka
-    ports:
-      - "9095:9092"
+    depends_on:
+      - zookeeper
     environment:
       KAFKA_ADVERTISED_HOST_NAME: kafka
       KAFKA_ADVERTISED_PORT: 9095
@@ -157,24 +155,27 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_CREATE_TOPICS: "newsler-news-crawler:1:2, newsler-twitter-crawler:1:2"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
-    networks:
-      - elk
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./kafka/data/01:/kafka
       - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh
+      - ./kafka/data/1:/kafka
+      - ./kafka/kafka-healthcheck.sh:/bin/kafka-healthcheck.sh
+    ports:
+      - "9095:9092"
+    networks:
+      - elk
     healthcheck:
       start_period: 30s
-      test: ["CMD", "curl", "-f", "http://localhost:9095"]
-      interval: 15s
-      timeout: 3s
+      test: ["CMD-SHELL", "/bin/kafka-healthcheck.sh"]
+      interval: 30s
+      timeout: 20s
       retries: 5
 
   kafka02:
-    image: wurstmeister/kafka
+    image: wurstmeister/kafka:2.12-2.5.0
     container_name: kafka02
-    ports:
-      - "9096:9092"
+    depends_on:
+      - zookeeper
     environment:
       KAFKA_ADVERTISED_HOST_NAME: kafka02
       KAFKA_ADVERTISED_PORT: 9096
@@ -186,74 +187,45 @@ services:
       KAFKA_BROKER_ID: 2
       KAFKA_CREATE_TOPICS: "newsler-news-crawler:1:2, newsler-twitter-crawler:1:2"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
-    networks:
-      - elk
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./kafka/data/02:/kafka
       - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh
-    healthcheck:
-      start_period: 30s
-      test: ["CMD", "curl", "-f", "http://localhost:9096"]
-      interval: 15s
-      timeout: 3s
-      retries: 5
-
-  mongo:
-    image: mongo:latest
-    container_name: mongo
-    environment:
-      - MONGO_INITDB_DATABASE=Newsler
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=rootpassword
-    volumes:
-      - type: volume
-        source: mongodb-data
-        target: /data/db
+      - ./kafka/data/1:/kafka
+      - ./kafka/kafka-healthcheck.sh:/bin/kafka-healthcheck.sh
     ports:
-      - 27017:27017
+      - "9096:9092"
     networks:
       - elk
     healthcheck:
       start_period: 30s
-      test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/Newsler --quiet
-      interval: 15s
-      timeout: 3s
+      test: ["CMD-SHELL", "/bin/kafka-healthcheck.sh"]
+      interval: 30s
+      timeout: 20s
       retries: 5
-
-  mongo-express:
-    image: mongo-express:latest
-    container_name: mongo-express
-    entrypoint: /usr/local/bin/mongo-express-entrypoint.sh
-    environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: rootpassword
-    volumes:
-      - ./elk/mongo-express-entrypoint.sh:/usr/local/bin/mongo-express-entrypoint.sh
-    ports:
-      - 8081:8081
-    networks:
-      - elk
-
-  cerebro:
-    image: lmenezes/cerebro:0.8.5
-    container_name: cerebro
-    ports:
-      - 9000:9000
-    networks:
-      - elk
 
   news-crawler:
     build:
       context: news-crawler
     image: news-crawler
     container_name: news-crawler
+    environment:
+      NEWS_INTERVAL_SECS: 60
+      KAFKA_ENDPOINT: kafka:9095
+      KAFKA_NEWS_TOPIC: newsler-news-crawler
+      LOGGING_LEVEL: INFO
     volumes:
       - type: volume
         source: news-logs
         target: /usr/src/app/logs
+      - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh
     networks:
       - elk
+    healthcheck:
+      start_period: 30s
+      test: ["CMD", "/usr/local/bin/supervisorctl", "status", "all"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
 
   twitter-crawler:
     build:
@@ -262,18 +234,35 @@ services:
     container_name: twitter-crawler
     env_file:
       - twitter-crawler/.env
+    environment:
+      KAFKA_ENDPOINT: "kafka:9095"
+      KAFKA_TWITTER_TOPIC: "newsler-twitter-crawler"
     volumes:
       - type: volume
         source: twitter-logs
         target: /usr/src/app/logs
+      - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh
     networks:
       - elk
+    healthcheck:
+      start_period: 30s
+      test: ["CMD", "/usr/local/bin/supervisorctl", "status", "all"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
 
   connector:
     build:
       context: connector
     image: connector
     container_name: connector
+    environment:
+      CONSUMER_INTERVAL_SECS: 30
+      ES_HOST: elasticsearch01
+      ES_PORT: 9200
+      KAFKA_ENDPOINT: kafka:9095
+      KAFKA_NEWS_TOPIC: newsler-news-crawler
+      KAFKA_TWITTER_TOPIC: newsler-twitter-crawler
     volumes:
       - type: volume
         source: connector-logs
@@ -281,6 +270,12 @@ services:
       - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh
     networks:
       - elk
+    healthcheck:
+      start_period: 30s
+      test: ["CMD", "/usr/local/bin/supervisorctl", "status", "all"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
 
 volumes:
   data01:
@@ -294,8 +289,6 @@ volumes:
   twitter-logs:
     driver: local
   connector-logs:
-    driver: local
-  mongodb-data:
     driver: local
 
 networks:

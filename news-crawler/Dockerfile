@@ -25,4 +25,7 @@ RUN cp filebeat.yml /etc/filebeat/filebeat.yml && \
     cp logrotate /etc/logrotate.d/ && \
     crontab cronjob
 
+RUN rm /etc/localtime && \
+    ln -s /usr/share/zoneinfo/America/Argentina/Cordoba /etc/localtime
+
 ENTRYPOINT ["./entrypoint.sh"]

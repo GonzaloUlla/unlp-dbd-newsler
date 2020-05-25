@@ -17,10 +17,10 @@ class Generator(object):
         logger.error("NotImplementedError: {}.generate callback is not defined".format(self.__class__.__name__))
         raise NotImplementedError("{}.generate callback is not defined".format(self.__class__.__name__))
 
-
-    def sanitize(self, original_string=None):
+    @staticmethod
+    def sanitize(original_string=None):
         if original_string is not None:
-            printable = set (string.printable)
+            printable = set(string.printable)
             sanitized = ''.join(filter(lambda x: x in printable, original_string)).replace('\'', '`').replace('"', '``')
             return sanitized
         return None
@@ -98,7 +98,7 @@ class AtomicTweetGenerator(Generator):
         }
         source = str(self.tweet_attr_extractor.extract("source"))
         if source.startswith('<a href'):
-            source = source[source.find('>')+1:source.rfind('<')]
+            source = source[source.find('>') + 1:source.rfind('<')]
         atomic_tweet["tweet_source"] = source
         return atomic_tweet
 
@@ -211,7 +211,8 @@ class TweetListsGenerator(Generator):
 
         if self.is_retweet:
             tweet_lists["tweet_retweeted_hashtags_list"] = self._get_entity_attr("tweet_retweeted_hashtags", "text")
-            tweet_lists["tweet_retweeted_mentions_list"] = self._get_entity_attr("tweet_retweeted_mentions", "screen_name")
+            tweet_lists["tweet_retweeted_mentions_list"] = self._get_entity_attr("tweet_retweeted_mentions",
+                                                                                 "screen_name")
             tweet_lists["tweet_retweeted_urls_list"] = self._get_entity_attr("tweet_retweeted_urls", "expanded_url")
 
         return tweet_lists

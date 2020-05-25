@@ -80,7 +80,7 @@ export LOGGING_LEVEL=<[INFO]|DEBUG|WARN|ERROR>
 docker-compose up -d --build
 
 # Multi-node Elasticsearch
-# docker-compose -f docker-compose-ha.yml up -d --build
+# docker-compose -f docker-compose.ha.yml up -d --build
 ```
 
 - Create index patterns in Kibana
