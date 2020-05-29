@@ -52,7 +52,7 @@ class NewsConsumerElasticSearchPublisher(KafkaConsumerElasticSearchPublisher):
         value_deserializer=lambda x: loads(x.decode('utf-8')))
 
     def __init__(self, sleep_time, **kwargs):
-        super().__init__(es_index="newsler-news-crawler",
+        super().__init__(es_index="logstash-data-news-crawler",
                          kafka_consumer=self.consumer,
                          sleep_time=sleep_time,
                          **kwargs)
@@ -68,7 +68,7 @@ class TwitterConsumerElasticSearchPublisher(KafkaConsumerElasticSearchPublisher)
         value_deserializer=lambda x: loads(x.decode('utf-8')))
 
     def __init__(self, sleep_time=30, **kwargs):
-        super().__init__(es_index="newsler-twitter-crawler",
+        super().__init__(es_index="logstash-data-twitter-crawler",
                          kafka_consumer=self.consumer,
                          sleep_time=sleep_time,
                          **kwargs)

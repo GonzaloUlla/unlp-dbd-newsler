@@ -103,7 +103,7 @@ docker-compose up -d --build
 
   - Go to `http://localhost:5601/`
   - Select: `Management` --> `Index Patterns`
-  - Select: `newsler-*` --> `Set as default index` --> `Refresh field list`
+  - Select: `logstash-data-*` --> `Set as default index` --> `Refresh field list`
   - Select:  `Management` --> `Index Patterns` --> `Create index pattern`
     - Index pattern: `logstash-logs-*`, Time Filter field name: `@timestamp`
 
@@ -113,7 +113,7 @@ docker-compose up -d --build
 
 - Discover data in real time
   - Select: `Discover`
-  - Select index: `newsler-*` for news and tweets (check [Data Dictionary](#data-dictionary))
+  - Select index: `logstash-data-*` for news and tweets (check [Data Dictionary](#data-dictionary))
   - Select index: `logstash-logs-*` for Newsler's logs
 
 ### Run with Docker and MongoDB
