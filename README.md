@@ -40,10 +40,6 @@ Diseño de Bases de Datos (DBD) - MS in Software Engineering 2019/2020 - UNLP
   - How to install latest stable release [here](https://tecadmin.net/install-python-3-8-ubuntu/)
 - Pip Packages:
   - `pip install -r requirements.txt`
-- News Crawler:
-  - Scrapy 2.0.1, Twisted 20.3.0, Supervisor 4.1.0
-- Twitter Crawler:
-  - Tweepy 3.8.0, JsonLines 1.2.0, PyEnchant 3.0.1, NLTK 3.5, TextBlob 0.15.3, Supervisor 4.1.0
 
 ### Configuration
 

@@ -1,6 +1,5 @@
 scrapy==2.0.1
 tweepy==3.8.0
-jsonlines==1.2.0
 Twisted==20.3.0
 pyenchant==3.0.1
 nltk==3.5

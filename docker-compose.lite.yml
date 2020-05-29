@@ -153,6 +153,7 @@ services:
       context: connector
     image: connector
     container_name: connector
+    entrypoint: /usr/src/app/connector-entrypoint-lite.sh
     environment:
       CONSUMER_INTERVAL_SECS: 30
       ES_HOST: elasticsearch
@@ -165,6 +166,7 @@ services:
       - type: volume
         source: connector-logs
         target: /usr/src/app/logs
+      - ./elk/elasticsearch-template.json:/usr/src/app/elasticsearch-template.json
       - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh
     networks:
       - elk
