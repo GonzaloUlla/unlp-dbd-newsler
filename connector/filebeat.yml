@@ -13,4 +13,4 @@ filebeat.inputs:
 output.logstash:
   enabled: true
   hosts: ["logstash:5044"]
-  index: 'twitter-crawler'
+  index: 'connector'

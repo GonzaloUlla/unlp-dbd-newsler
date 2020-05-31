@@ -12,7 +12,8 @@ Diseño de Bases de Datos (DBD) - MS in Software Engineering 2019/2020 - UNLP
     - [Dependencies](#dependencies)
     - [Configuration](#configuration)
   - [Getting Started](#getting-started)
-    - [Run with Docker](#run-with-docker)
+    - [Run with Docker and Elasticsearch](#run-with-docker-and-elasticsearch)
+    - [Run with Docker and MongoDB](#run-with-docker-and-mongodb)
     - [Run without Docker: news-crawler](#run-without-docker-news-crawler)
     - [Run without Docker: twitter-crawler](#run-without-docker-twitter-crawler)
   - [Data Dictionary](#data-dictionary)
@@ -39,10 +40,6 @@ Diseño de Bases de Datos (DBD) - MS in Software Engineering 2019/2020 - UNLP
   - How to install latest stable release [here](https://tecadmin.net/install-python-3-8-ubuntu/)
 - Pip Packages:
   - `pip install -r requirements.txt`
-- News Crawler:
-  - Scrapy 2.0.1, Twisted 20.3.0, Supervisor 4.1.0
-- Twitter Crawler:
-  - Tweepy 3.8.0, JsonLines 1.2.0, PyEnchant 3.0.1, NLTK 3.5, TextBlob 0.15.3, Supervisor 4.1.0
 
 ### Configuration
 
@@ -53,7 +50,6 @@ CONSUMER_KEY=<KEY-WITHOUT-QUOTES>
 CONSUMER_SECRET=<KEY-WITHOUT-QUOTES>
 ACCESS_TOKEN=<KEY-WITHOUT-QUOTES>
 ACCESS_TOKEN_SECRET=<KEY-WITHOUT-QUOTES>
-LOGGING_LEVEL=<[INFO]|DEBUG|WARN|ERROR>
 ```
 
 - If you are not using Docker, remember to export the previous keys
@@ -63,12 +59,19 @@ export CONSUMER_KEY=<KEY-WITHOUT-QUOTES>
 export CONSUMER_SECRET=<KEY-WITHOUT-QUOTES>
 export ACCESS_TOKEN=<KEY-WITHOUT-QUOTES>
 export ACCESS_TOKEN_SECRET=<KEY-WITHOUT-QUOTES>
+```
+
+- **Optional:** Set the services' logging level
+
+```bash
 export LOGGING_LEVEL=<[INFO]|DEBUG|WARN|ERROR>
 ```
 
+- **Optional:** Extra configuration options as `environment` keys in Compose YML files
+
 ## Getting Started
 
-### Run with Docker
+### Run with Docker and Elasticsearch
 
 - Start the stack
 
@@ -79,8 +82,11 @@ export LOGGING_LEVEL=<[INFO]|DEBUG|WARN|ERROR>
 # Single-node Elasticsearch
 docker-compose up -d --build
 
+# Single-node Elasticsearch without shipping logs to ELK
+# docker-compose -f docker-compose.lite.yml up -d --build
+
 # Multi-node Elasticsearch
-# docker-compose -f docker-compose-ha.yml up -d --build
+# docker-compose -f docker-compose.ha.yml up -d --build
 ```
 
 - Import Dashboard and default Index Pattern to Kibana
@@ -106,6 +112,30 @@ docker-compose up -d --build
   - Select index: `logstash-data-*` for news and tweets (check [Data Dictionary](#data-dictionary))
   - Select index: `logstash-logs-*` for Newsler's logs
 
+### Run with Docker and MongoDB
+
+- Start the stack
+
+```bash
+# If you are using a VM, run this with root:
+# sysctl -w vm.max_map_count=262144
+
+# Single-node MongoDB
+docker-compose -f docker-compose.mongo.yml up -d --build
+```
+
+- Wait until all services are healthy
+
+```bash
+watch -n1 docker-compose -f docker-compose.mongo.yml ps
+```
+
+- Explore data in MongoDB Express
+
+  - Go to `localhost:8081`
+  - Select database with name `newsler`
+  - Select collection with name `news-crawler`
+  - Select collection with name `twitter-crawler`
 
 ### Run without Docker: news-crawler
 

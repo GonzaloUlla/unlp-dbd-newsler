@@ -5,23 +5,23 @@ import json
 import logging
 import os
 import time
-from datetime import datetime
+import traceback
 from hashlib import sha256
+from json import dumps
+from multiprocessing import Process, Queue
 
+from kafka import KafkaProducer
 from scrapy.crawler import CrawlerRunner
 from scrapy.spiders import Spider
-from multiprocessing import Process, Queue
 from twisted.internet import reactor
 
+logging_level = os.getenv("LOGGING_LEVEL", "INFO")
 formatter = '%(levelname)s [%(asctime)s] %(filename)s: %(message)s'
-logging.basicConfig(level=logging.INFO, format=formatter)
+logging.basicConfig(level=logging.getLevelName(logging_level), format=formatter)
 logger = logging.getLogger()
 
-
-def get_filename():
-    to_json_timestamp = datetime.now().strftime('%Y%m%d_%H%M')
-    path = os.getcwd()
-    return path + '/data/websites_' + to_json_timestamp + '.json'
+kafka_servers = [os.getenv("KAFKA_ENDPOINT", "kafka:9095")]
+kafka_topic = os.getenv("KAFKA_NEWS_TOPIC", "newsler-news-crawler")
 
 
 class XPathSpider(Spider):
@@ -50,7 +50,7 @@ class XPathSpider(Spider):
                     'news_text': self._get_news_text(title)
                 }
                 self._add_event_id()
-                self._export_news()
+                self._produce_news()
                 yield self.news
 
     def _set_absolute_url(self, title):
@@ -72,10 +72,15 @@ class XPathSpider(Spider):
         event_id = sha256(json.dumps(self.news, sort_keys=True).encode('utf8')).hexdigest()
         self.news['event_id'] = event_id
 
-    def _export_news(self):
-        filename = get_filename()
-        with open(filename, 'a+') as file:
-            file.write(json.dumps(self.news) + '\n')
+    def _produce_news(self):
+        try:
+            producer = KafkaProducer(bootstrap_servers=kafka_servers,
+                                     value_serializer=lambda x:
+                                     dumps(x).encode("utf-8"))
+            producer.send(kafka_topic, value=self.news)
+        except Exception as e:
+            logger.error("Error producing News: [{}]".format(self.news))
+            logger.error(traceback.format_exc())
 
 
 class AlJazeeraSpider(XPathSpider):
@@ -203,4 +208,4 @@ def main(sleep_time):
 
 
 if __name__ == "__main__":
-    main(60)
+    main(int(os.getenv("NEWS_INTERVAL_SECS", 60)))

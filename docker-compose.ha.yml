@@ -108,12 +108,15 @@ services:
   logstash:
     image: docker.elastic.co/logstash/logstash:7.6.2
     container_name: logstash
+    entrypoint: /usr/share/logstash/logstash-entrypoint-ha.sh
     environment:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
     volumes:
       - ./elk/logstash-ha.yml:/usr/share/logstash/config/logstash.yml
       - ./elk/elasticsearch-template-ha.json:/usr/share/logstash/config/elasticsearch-template-ha.json
       - ./elk/pipeline-ha:/usr/share/logstash/pipeline:ro
+      - ./elk/logstash-entrypoint-ha.sh:/usr/share/logstash/logstash-entrypoint-ha.sh
+      - ./wait-for-it.sh:/usr/share/logstash/wait-for-it.sh
     ports:
       - 9600:9600
     networks:
@@ -125,28 +128,76 @@ services:
       timeout: 3s
       retries: 5
 
-  cerebro:
-    image: lmenezes/cerebro:0.8.5
-    container_name: cerebro
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    container_name: zookeeper
     ports:
-      - 9000:9000
+      - "2181:2181"
     networks:
       - elk
+    healthcheck:
+      start_period: 30s
+      test: ['CMD', '/bin/bash', '-c', 'echo "ruok" | nc -w 2 -q 2 localhost 2181 | grep imok']
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+  kafka:
+    image: wurstmeister/kafka:2.12-2.5.0
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ADVERTISED_PORT: 9095
+      KAFKA_LISTENERS: LISTENER_KAFKA://kafka:9095
+      KAFKA_ADVERTISED_LISTENERS: LISTENER_KAFKA://kafka:9095
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_KAFKA:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_KAFKA
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LOG_DIRS: /kafka/logs
+      KAFKA_BROKER_ID: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_CREATE_TOPICS: "newsler-news-crawler:1:1, newsler-twitter-crawler:1:1"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh
+      - ./kafka/kafka-healthcheck.sh:/bin/kafka-healthcheck.sh
+    ports:
+      - "9095:9092"
+    networks:
+      - elk
+    healthcheck:
+      start_period: 30s
+      test: ["CMD-SHELL", "/bin/kafka-healthcheck.sh"]
+      interval: 30s
+      timeout: 20s
+      retries: 5
 
   news-crawler:
     build:
       context: news-crawler
     image: news-crawler
     container_name: news-crawler
+    environment:
+      NEWS_INTERVAL_SECS: 60
+      KAFKA_ENDPOINT: kafka:9095
+      KAFKA_NEWS_TOPIC: newsler-news-crawler
+      LOGGING_LEVEL: ${LOGGING_LEVEL:-INFO}
     volumes:
-      - type: volume
-        source: news-data
-        target: /usr/src/app/data
       - type: volume
         source: news-logs
         target: /usr/src/app/logs
+      - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh
     networks:
       - elk
+    healthcheck:
+      start_period: 30s
+      test: ["CMD", "/usr/local/bin/supervisorctl", "status", "all"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
 
   twitter-crawler:
     build:
@@ -155,15 +206,51 @@ services:
     container_name: twitter-crawler
     env_file:
       - twitter-crawler/.env
+    environment:
+      KAFKA_ENDPOINT: "kafka:9095"
+      KAFKA_TWITTER_TOPIC: "newsler-twitter-crawler"
+      LOGGING_LEVEL: ${LOGGING_LEVEL:-INFO}
     volumes:
-      - type: volume
-        source: twitter-data
-        target: /usr/src/app/data
       - type: volume
         source: twitter-logs
         target: /usr/src/app/logs
+      - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh
     networks:
       - elk
+    healthcheck:
+      start_period: 30s
+      test: ["CMD", "/usr/local/bin/supervisorctl", "status", "all"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  connector:
+    build:
+      context: connector
+    image: connector
+    container_name: connector
+    entrypoint: /usr/src/app/connector-entrypoint-ha.sh
+    environment:
+      CONSUMER_INTERVAL_SECS: 30
+      ES_HOST: elasticsearch01
+      ES_PORT: 9200
+      KAFKA_ENDPOINT: kafka:9095
+      KAFKA_NEWS_TOPIC: newsler-news-crawler
+      KAFKA_TWITTER_TOPIC: newsler-twitter-crawler
+      LOGGING_LEVEL: ${LOGGING_LEVEL:-INFO}
+    volumes:
+      - type: volume
+        source: connector-logs
+        target: /usr/src/app/logs
+      - ./wait-for-it.sh:/usr/src/app/wait-for-it.sh
+    networks:
+      - elk
+    healthcheck:
+      start_period: 30s
+      test: ["CMD", "/usr/local/bin/supervisorctl", "status", "all"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
 
 volumes:
   data01:
@@ -172,13 +259,11 @@ volumes:
     driver: local
   data03:
     driver: local
-  news-data:
-    driver: local
   news-logs:
     driver: local
-  twitter-data:
-    driver: local
   twitter-logs:
+    driver: local
+  connector-logs:
     driver: local
 
 networks:

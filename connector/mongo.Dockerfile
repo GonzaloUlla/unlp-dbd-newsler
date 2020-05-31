@@ -19,10 +19,10 @@ ADD . /usr/src/app/
 
 RUN cp filebeat.yml /etc/filebeat/filebeat.yml && \
     chmod go-w /etc/filebeat/filebeat.yml && \
-    cat supervisor.conf >> /etc/supervisor/supervisord.conf && \
+    cat supervisor-mongo.conf >> /etc/supervisor/supervisord.conf && \
     chmod 644 logrotate && \
     chown root:root logrotate && \
     cp logrotate /etc/logrotate.d/ && \
     crontab cronjob
 
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["./connector-entrypoint-mongo.sh"]

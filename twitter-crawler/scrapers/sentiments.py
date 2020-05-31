@@ -1,16 +1,19 @@
 import re
 import time
-from string import punctuation
-
+import logging
+import os
 import enchant
+
+from string import punctuation
 from nltk.corpus import stopwords, wordnet
 from nltk.metrics import edit_distance
 from nltk.tokenize import word_tokenize
 from textblob import TextBlob
 
-from .utils import get_logger
-
-logger = get_logger()
+logging_level = os.getenv("LOGGING_LEVEL", "INFO")
+formatter = '%(levelname)s [%(asctime)s] %(filename)s: %(message)s'
+logging.basicConfig(level=logging.getLevelName(logging_level), format=formatter)
+logger = logging.getLogger()
 
 replacement_patterns = [
     (r'((www\.[^\s]+)|(https?://[^\s]+))', 'URL'),

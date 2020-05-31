@@ -1,8 +1,15 @@
 import logging
 import os
-from datetime import datetime
+import traceback
+from json import dumps
 
 import tweepy
+from kafka import KafkaProducer
+
+from .sentiments import TweetAnalyzer
+
+kafka_servers = [os.getenv("KAFKA_ENDPOINT", "kafka:9095")]
+kafka_topic = os.getenv("KAFKA_TWITTER_TOPIC", "newsler-twitter-crawler")
 
 
 def get_logger():
@@ -36,7 +43,23 @@ def create_api():
     return api
 
 
-def get_filename(prefix=''):
-    to_json_timestamp = datetime.now().strftime('%Y%m%d_%H%M')
-    path = os.getcwd()
-    return path + '/data/' + prefix + '_' + to_json_timestamp + '.json'
+def produce_tweet(tweet=None, method=None):
+    try:
+        producer = KafkaProducer(bootstrap_servers=kafka_servers,
+                                 value_serializer=lambda x:
+                                 dumps(x).encode('utf-8'))
+        logger.info("Producing {crawler} tweet: {data}".format(crawler=method, data=str(tweet)))
+        producer.send(topic=kafka_topic, value=tweet)
+    except Exception as e:
+        logger.error("Error producing {crawler} tweet: [{data}] \n {exc}"
+                     .format(crawler=method, data=str(tweet), exc=traceback.format_exc()))
+
+
+def process_tweet(generated_tweet=None):
+    analyzer = TweetAnalyzer()
+
+    sentiments = analyzer.get_sentiment(generated_tweet["tweet_text"])
+    generated_tweet.update(sentiments)
+
+    logger.debug("Processed Tweet JSON to export: [{}]".format(dumps(generated_tweet)))
+    return generated_tweet

@@ -1,5 +1,6 @@
 import json
 import time
+import string
 
 from .utils import get_logger
 from .extractors import AttributeExtractor, EntitiesExtractor, EntitiesListExtractor, RetweetedStatusExtractor, \
@@ -15,6 +16,14 @@ class Generator(object):
     def generate(self):
         logger.error("NotImplementedError: {}.generate callback is not defined".format(self.__class__.__name__))
         raise NotImplementedError("{}.generate callback is not defined".format(self.__class__.__name__))
+
+    @staticmethod
+    def sanitize(original_string=None):
+        if original_string is not None:
+            printable = set(string.printable)
+            sanitized = ''.join(filter(lambda x: x in printable, original_string)).replace('\'', '`').replace('"', '``')
+            return sanitized
+        return None
 
 
 class PollingTweetTextGenerator(Generator):
@@ -53,7 +62,7 @@ class StreamingTweetTextGenerator(Generator):
             tweet_text = self.tweet["extended_tweet"]["full_text"]
         else:
             tweet_text = self.tweet["text"]
-        return tweet_text
+        return self.sanitize(tweet_text)
 
 
 class AtomicTweetGenerator(Generator):
@@ -75,7 +84,7 @@ class AtomicTweetGenerator(Generator):
             "event_id": self.tweet_attr_extractor.extract("id_str"),
             "tweet_id": self.tweet_attr_extractor.extract("id"),
             "tweet_id_str": self.tweet_attr_extractor.extract("id_str"),
-            "tweet_text": self.text_generator.generate(),
+            "tweet_text": self.sanitize(self.text_generator.generate()),
             "tweet_hashtags": self.entities_attr_extractor.extract("hashtags"),
             "tweet_is_quote": self.tweet_attr_extractor.extract("is_quote_status"),
             "tweet_is_retweet": self.retweeted_status in self.tweet,
@@ -83,11 +92,14 @@ class AtomicTweetGenerator(Generator):
             "tweet_likes": self.tweet_attr_extractor.extract("favorite_count"),
             "tweet_mentions": self.entities_attr_extractor.extract("user_mentions"),
             "tweet_retweets": self.tweet_attr_extractor.extract("retweet_count"),
-            "tweet_source": self.tweet_attr_extractor.extract("source"),
             "tweet_streaming": self.streaming,
-            "tweet_timestamp": str(self.tweet_attr_extractor.extract("created_at")),
+            "tweet_timestamp": self.tweet_attr_extractor.extract("created_at"),
             "tweet_urls": self.entities_attr_extractor.extract("urls")
         }
+        source = str(self.tweet_attr_extractor.extract("source"))
+        if source.startswith('<a href'):
+            source = source[source.find('>') + 1:source.rfind('<')]
+        atomic_tweet["tweet_source"] = source
         return atomic_tweet
 
 
@@ -102,9 +114,9 @@ class UserGenerator(Generator):
     def generate(self):
         user = {
             "tweet_user_id": self.user_extractor.extract("id"),
-            "tweet_user_name": self.user_extractor.extract("screen_name"),
+            "tweet_user_name": self.sanitize(self.user_extractor.extract("screen_name")),
             "tweet_user_creation_timestamp": str(self.user_extractor.extract("created_at")),
-            "tweet_user_description": self.user_extractor.extract("description"),
+            "tweet_user_description": self.sanitize(self.user_extractor.extract("description")),
             "tweet_user_followers": self.user_extractor.extract("followers_count"),
             "tweet_user_following": self.user_extractor.extract("friends_count"),
             "tweet_user_location": self.user_extractor.extract("location"),
@@ -131,14 +143,14 @@ class RetweetedTweetGenerator(Generator):
         retweeted_tweet = {
             "tweet_retweeted_id": self.retweeted_extractor.extract("id"),
             "tweet_retweeted_id_str": self.retweeted_extractor.extract("id_str"),
-            "tweet_retweeted_text": self._get_retweeted_text(),
+            "tweet_retweeted_text": self.sanitize(self._get_retweeted_text()),
             "tweet_retweeted_hashtags": self.entities_attr_extractor.extract("hashtags"),
             "tweet_retweeted_likes": self.retweeted_extractor.extract("favorite_count"),
             "tweet_retweeted_mentions": self.entities_attr_extractor.extract("user_mentions"),
             "tweet_retweeted_retweets": self.retweeted_extractor.extract("retweet_count"),
             "tweet_retweeted_urls": self.entities_attr_extractor.extract("urls"),
             "tweet_retweeted_user_id": self.user_attr_extractor.extract("id"),
-            "tweet_retweeted_user_name": self.user_attr_extractor.extract("screen_name")
+            "tweet_retweeted_user_name": self.sanitize(self.user_attr_extractor.extract("screen_name"))
         }
         return retweeted_tweet
 
@@ -160,25 +172,27 @@ class QuotedTweetGenerator(Generator):
         quoted_tweet = {
             "tweet_quoted_id": self.quoted_extractor.extract("id"),
             "tweet_quoted_id_str": self.quoted_extractor.extract("id_str"),
-            "tweet_quoted_text": self._get_quoted_text(),
+            "tweet_quoted_text": self.sanitize(self._get_quoted_text()),
             "tweet_quoted_hashtags": self.entities_attr_extractor.extract("hashtags"),
             "tweet_quoted_likes": self.quoted_extractor.extract("favorite_count"),
             "tweet_quoted_mentions": self.entities_attr_extractor.extract("user_mentions"),
             "tweet_quoted_retweets": self.quoted_extractor.extract("retweet_count"),
             "tweet_quoted_urls": self.entities_attr_extractor.extract("urls"),
             "tweet_quoted_user_id": self.user_attr_extractor.extract("id"),
-            "tweet_quoted_user_name": self.user_attr_extractor.extract("screen_name")
+            "tweet_quoted_user_name": self.sanitize(self.user_attr_extractor.extract("screen_name"))
         }
         return quoted_tweet
 
 
 class TweetListsGenerator(Generator):
 
-    def __init__(self, base_tweet=None):
+    def __init__(self, base_tweet=None, is_quote=False, is_retweet=False):
         if base_tweet is None:
             logger.error("ValueError: base_tweet cannot be None")
             raise ValueError("A base_tweet is required")
         self.tweet_ext = AttributeExtractor(base_tweet)
+        self.is_quote = is_quote
+        self.is_retweet = is_retweet
 
     def _get_entity_attr(self, k, v):
         return EntitiesExtractor(self.tweet_ext.extract(k)).extract(v)
@@ -187,37 +201,51 @@ class TweetListsGenerator(Generator):
         tweet_lists = {
             "tweet_hashtags_list": self._get_entity_attr("tweet_hashtags", "text"),
             "tweet_mentions_list": self._get_entity_attr("tweet_mentions", "screen_name"),
-            "tweet_urls_list": self._get_entity_attr("tweet_urls", "expanded_url"),
-            "tweet_retweeted_hashtags_list": self._get_entity_attr("tweet_retweeted_hashtags", "text"),
-            "tweet_retweeted_mentions_list": self._get_entity_attr("tweet_retweeted_mentions", "screen_name"),
-            "tweet_retweeted_urls_list": self._get_entity_attr("tweet_retweeted_urls", "expanded_url"),
-            "tweet_quoted_hashtags_list": self._get_entity_attr("tweet_quoted_hashtags", "text"),
-            "tweet_quoted_mentions_list": self._get_entity_attr("tweet_quoted_mentions", "screen_name"),
-            "tweet_quoted_urls_list": self._get_entity_attr("tweet_quoted_urls", "expanded_url")
+            "tweet_urls_list": self._get_entity_attr("tweet_urls", "expanded_url")
         }
+
+        if self.is_quote:
+            tweet_lists["tweet_quoted_hashtags_list"] = self._get_entity_attr("tweet_quoted_hashtags", "text")
+            tweet_lists["tweet_quoted_mentions_list"] = self._get_entity_attr("tweet_quoted_mentions", "screen_name")
+            tweet_lists["tweet_quoted_urls_list"] = self._get_entity_attr("tweet_quoted_urls", "expanded_url")
+
+        if self.is_retweet:
+            tweet_lists["tweet_retweeted_hashtags_list"] = self._get_entity_attr("tweet_retweeted_hashtags", "text")
+            tweet_lists["tweet_retweeted_mentions_list"] = self._get_entity_attr("tweet_retweeted_mentions",
+                                                                                 "screen_name")
+            tweet_lists["tweet_retweeted_urls_list"] = self._get_entity_attr("tweet_retweeted_urls", "expanded_url")
+
         return tweet_lists
 
 
 class TweetAllListsGenerator(Generator):
 
-    def __init__(self, tweet_with_lists=None):
+    def __init__(self, tweet_with_lists=None, is_quoted=False, is_retweeted=False):
         if tweet_with_lists is None:
             logger.error("ValueError: tweet_with_lists cannot be None")
             raise ValueError("A tweet_with_lists is required")
         self.tweet_ext = AttributeExtractor(tweet_with_lists)
+        self.is_quoted = is_quoted
+        self.is_retweeted = is_retweeted
 
     def generate(self):
-        hashtags_list = [self.tweet_ext.extract("tweet_hashtags_list"),
-                         self.tweet_ext.extract("tweet_retweeted_hashtags_list"),
-                         self.tweet_ext.extract("tweet_quoted_hashtags_list")]
+        hashtags_list = [self.tweet_ext.extract("tweet_hashtags_list")]
+        if self.is_retweeted:
+            hashtags_list.append(self.tweet_ext.extract("tweet_retweeted_hashtags_list"))
+        if self.is_quoted:
+            hashtags_list.append(self.tweet_ext.extract("tweet_quoted_hashtags_list"))
 
-        mentions_list = [self.tweet_ext.extract("tweet_mentions_list"),
-                         self.tweet_ext.extract("tweet_retweeted_mentions_list"),
-                         self.tweet_ext.extract("tweet_quoted_mentions_list")]
+        mentions_list = [self.tweet_ext.extract("tweet_mentions_list")]
+        if self.is_retweeted:
+            mentions_list.append(self.tweet_ext.extract("tweet_retweeted_mentions_list"))
+        if self.is_quoted:
+            hashtags_list.append(self.tweet_ext.extract("tweet_quoted_mentions_list"))
 
-        urls_list = [self.tweet_ext.extract("tweet_urls_list"),
-                     self.tweet_ext.extract("tweet_retweeted_urls_list"),
-                     self.tweet_ext.extract("tweet_quoted_urls_list")]
+        urls_list = [self.tweet_ext.extract("tweet_urls_list")]
+        if self.is_retweeted:
+            urls_list.append(self.tweet_ext.extract("tweet_retweeted_urls_list"))
+        if self.is_quoted:
+            hashtags_list.append(self.tweet_ext.extract("tweet_quoted_urls_list"))
 
         tweet_all_lists = {
             "tweet_hashtags_list_all": EntitiesListExtractor().extract(hashtags_list),
@@ -243,10 +271,14 @@ class PollingTweetGenerator(Generator):
 
         polling_tweet = self.atomic.generate()
         polling_tweet.update(self.user.generate())
-        polling_tweet.update(self.retweeted.generate())
-        polling_tweet.update(self.quoted.generate())
-        polling_tweet.update(TweetListsGenerator(polling_tweet).generate())
-        polling_tweet.update(TweetAllListsGenerator(polling_tweet).generate())
+        is_quoted = polling_tweet['tweet_is_quote']
+        is_retweeted = polling_tweet['tweet_is_retweet']
+        if is_quoted:
+            polling_tweet.update(self.quoted.generate())
+        if is_retweeted:
+            polling_tweet.update(self.retweeted.generate())
+        polling_tweet.update(TweetListsGenerator(polling_tweet, is_quoted, is_retweeted).generate())
+        polling_tweet.update(TweetAllListsGenerator(polling_tweet, is_quoted, is_retweeted).generate())
 
         elapsed_time = round(time.time() - start_time, 4)
         logger.debug("Generated polling tweet in {} seconds: [{}]".format(elapsed_time, json.dumps(polling_tweet)))
@@ -269,10 +301,14 @@ class StreamingTweetGenerator(Generator):
 
         streaming_tweet = self.atomic.generate()
         streaming_tweet.update(self.user.generate())
-        streaming_tweet.update(self.retweeted.generate())
-        streaming_tweet.update(self.quoted.generate())
-        streaming_tweet.update(TweetListsGenerator(streaming_tweet).generate())
-        streaming_tweet.update(TweetAllListsGenerator(streaming_tweet).generate())
+        is_quoted = streaming_tweet['tweet_is_quote']
+        is_retweeted = streaming_tweet['tweet_is_retweet']
+        if is_quoted:
+            streaming_tweet.update(self.quoted.generate())
+        if is_retweeted:
+            streaming_tweet.update(self.retweeted.generate())
+        streaming_tweet.update(TweetListsGenerator(streaming_tweet, is_quoted, is_retweeted).generate())
+        streaming_tweet.update(TweetAllListsGenerator(streaming_tweet, is_quoted, is_retweeted).generate())
 
         elapsed_time = round(time.time() - start_time, 4)
         logger.debug("Generated streaming tweet in {} seconds: [{}]".format(elapsed_time, json.dumps(streaming_tweet)))

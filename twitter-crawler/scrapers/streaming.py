@@ -1,34 +1,12 @@
 """
 Twitter Scraper to stream tweets in real time according to specific keywords.
 """
-import json
-
 import tweepy
 
 from .generators import StreamingTweetGenerator
-from .sentiments import TweetAnalyzer
-from .utils import create_api, get_filename, get_logger
+from .utils import create_api, get_logger, produce_tweet, process_tweet
 
 logger = get_logger()
-
-
-def process_tweet(tweet):
-    analyzer = TweetAnalyzer()
-
-    streaming_tweet = StreamingTweetGenerator(tweet._json).generate()
-    sentiments = analyzer.get_sentiment(streaming_tweet["tweet_text"])
-    streaming_tweet.update(sentiments)
-
-    logger.debug("Processed Tweet JSON to export: [{}]".format(json.dumps(streaming_tweet)))
-
-    return streaming_tweet
-
-
-def export_tweet(tweet):
-    filename = get_filename('streaming')
-    with open(filename, 'a+') as file:
-        file.write(json.dumps(process_tweet(tweet)) + '\n')
-    logger.debug('Tweet exported to: {}'.format(filename))
 
 
 class NewsStreamListener(tweepy.StreamListener):
@@ -40,7 +18,8 @@ class NewsStreamListener(tweepy.StreamListener):
 
     def on_status(self, tweet):
         logger.info("New tweet streamed with text: [{}]".format(tweet.text[:50] + "..."))
-        export_tweet(tweet)
+        processed_tweet = process_tweet(generated_tweet=StreamingTweetGenerator(tweet._json).generate())
+        produce_tweet(tweet=processed_tweet, method="streaming")
 
     def on_error(self, status):
         logger.error("Error detected")

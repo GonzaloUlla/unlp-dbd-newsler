@@ -25,4 +25,4 @@ RUN cp filebeat.yml /etc/filebeat/filebeat.yml && \
     cp logrotate /etc/logrotate.d/ && \
     crontab cronjob
 
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["./connector-entrypoint.sh"]
