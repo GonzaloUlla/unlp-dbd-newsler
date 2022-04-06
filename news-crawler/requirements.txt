@@ -1,4 +1,4 @@
 scrapy==2.0.1
-Twisted==20.3.0
+Twisted==22.2.0
 supervisor==4.1.0
 kafka-python==2.0.1
