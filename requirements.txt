@@ -1,6 +1,6 @@
 scrapy==2.0.1
 tweepy==3.8.0
-Twisted==20.3.0
+Twisted==22.4.0
 pyenchant==3.0.1
 nltk==3.5
 textblob==0.15.3
