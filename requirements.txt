@@ -1,4 +1,4 @@
-scrapy==2.0.1
+scrapy==2.6.2
 tweepy==3.8.0
 Twisted==20.3.0
 pyenchant==3.0.1
